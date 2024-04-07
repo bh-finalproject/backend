@@ -18,9 +18,15 @@ module.exports = (sequelize, DataTypes) => {
   User.init({
     userId: DataTypes.INTEGER,
     role: DataTypes.STRING
-  }, {
+  }, 
+  {
     sequelize,
     modelName: 'User',
+    hooks:{
+      beforeCreate:(user)=>{
+        user.role = 'User'
+      }
+    }
   });
   return User;
 };

@@ -24,6 +24,21 @@ class UserController{
             next(err)
         }
     }
+
+    static async userRegister(req,res,next){
+        try {
+            const {email, password,phoneNumber } = req.body
+            if (!email || !password || !phoneNumber) throw{name:"cannotEmpty"}
+
+            const createUserData = await UserData.create(req.body)
+
+            const createUser = await User.create({userId:createUserData.id})
+
+            res.status(201).json({ message: "Register account success" })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = UserController
