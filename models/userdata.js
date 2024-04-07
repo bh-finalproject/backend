@@ -16,10 +16,57 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   UserData.init({
-    username: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    phoneNumber: DataTypes.STRING
+    username: {
+      type:DataTypes.STRING
+    },
+    email: {
+      type:DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        },
+        isEmail:{
+          msg:'Format wajib email'
+        }
+      },
+      unique:{
+        msg:'Email sudah terdaftar'
+      }
+    },
+    password: {
+      type:DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        },
+        minLength(val){
+          if (val.length < 5){
+            throw new Error ("Minimum 5 karakter")
+        }
+      }
+      }
+    },
+    phoneNumber: {
+      type:DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        }
+        
+      }
+    }
   }, {
     sequelize,
     modelName: 'UserData',

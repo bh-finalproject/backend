@@ -1,0 +1,162 @@
+[
+    {
+        "namaBarang":"Stetoskop",
+        "jumlah":5,
+        "kategori":"Medis",
+        "lokasi":"RS LALALALA",
+        "gambar":"public/itemImg-1.jpg",
+        "deskripsi":"ini Stetoskop"
+    },
+    {
+        "namaBarang":"Kursi Roda",
+        "jumlah":2,
+        "kategori":"Nonmedis",
+        "lokasi":"RS Lilili",
+        "gambar":"public/itemImg-2.jpg",
+        "deskripsi":"ini Kursi Roda"
+    },
+    {
+        "namaBarang":"Sunti",
+        "jumlah":10,
+        "kategori":"Medis",
+        "lokasi":"RS hahahaha",
+        "gambar":"public/itemImg-3.jpg",
+        "deskripsi":"ini jarum lho"
+    },
+    {
+        "namaBarang":"Rak Medis",
+        "jumlah":3,
+        "kategori":"Nonmedis",
+        "lokasi":"RS Lilili",
+        "gambar":"public/itemImg-4.jpg",
+        "deskripsi":"ini rak aluminum"
+    },
+    {
+        "namaBarang":"Kasur",
+        "jumlah":1,
+        "kategori":"Nonmedis",
+        "lokasi":"RS hahaha",
+        "gambar":"public/itemImg-5.jpg",
+        "deskripsi":"ini Kasur"
+    },
+    {
+        "namaBarang":"Gunting Medis",
+        "jumlah":20,
+        "kategori":"Medis",
+        "lokasi":"RS Lilili",
+        "gambar":"public/itemImg-6.jpg",
+        "deskripsi":"ini Gunting medis"
+    },
+    {
+        "namaBarang":"Tabung Oksigen",
+        "jumlah":6,
+        "kategori":"Medis",
+        "lokasi":"RS Lulululu",
+        "gambar":"public/itemImg-7.jpg",
+        "deskripsi":"ini Tabung Oksigen"
+    },
+    {
+        "namaBarang":"Bor Tulang",
+        "jumlah":8,
+        "kategori":"Medis",
+        "lokasi":"RS Lilili",
+        "gambar":"public/itemImg-8.jpg",
+        "deskripsi":"ini bor tulang"
+    },
+    {
+        "namaBarang":"Gergaji Tulang",
+        "jumlah":2,
+        "kategori":"Medis",
+        "lokasi":"RS Lilili",
+        "gambar":"public/itemImg-9.jpg",
+        "deskripsi":"ini Bor Tulang"
+    },
+    {
+        "namaBarang":"Kateter",
+        "jumlah":15,
+        "kategori":"Medis",
+        "lokasi":"RS Lulululu",
+        "gambar":"public/itemImg-10.jpg",
+        "deskripsi":"ini Kateter"
+    },
+    {
+        "namaBarang":"Kamera Endoskopi",
+        "jumlah":1,
+        "kategori":"Medis",
+        "lokasi":"RS hahaha",
+        "gambar":"public/itemImg-11.jpg",
+        "deskripsi":"ini kamera endoskopi"
+    },
+    {
+        "namaBarang":"Mesin X-ray",
+        "jumlah":3,
+        "kategori":"Medis",
+        "lokasi":"RS hihihi",
+        "gambar":"public/itemImg-12.jpg",
+        "deskripsi":"ini mesin x-ray"
+    },
+    {
+        "namaBarang":"Mesin MRI",
+        "jumlah":4,
+        "kategori":"Medis",
+        "lokasi":"RS Lulululu",
+        "gambar":"public/itemImg-13.jpg",
+        "deskripsi":"ini mesin MRI"
+    },
+    {
+        "namaBarang":"Jas Lab",
+        "jumlah":22,
+        "kategori":"Nonmedis",
+        "lokasi":"RS hahaha",
+        "gambar":"public/itemImg-14.jpg",
+        "deskripsi":"ini jas lab"
+    },
+    {
+        "namaBarang":"Botol Obat",
+        "jumlah":50,
+        "kategori":"Nonmedis",
+        "lokasi":"RS Lololo",
+        "gambar":"public/itemImg-15.jpg",
+        "deskripsi":"ini botol kosong"
+    },
+    {
+        "namaBarang":"Termometer",
+        "jumlah":9,
+        "kategori":"Nonmedis",
+        "lokasi":"RS hahaha",
+        "gambar":"public/itemImg-16.jpg",
+        "deskripsi":"ini termometer"
+    },
+    {
+        "namaBarang":"Tensimeter",
+        "jumlah":4,
+        "kategori":"Nonmedis",
+        "lokasi":"RS Lulululu",
+        "gambar":"public/itemImg-17.jpg",
+        "deskripsi":"ini tensimeter"
+    },
+    {
+        "namaBarang":"Mesin EKG",
+        "jumlah":6,
+        "kategori":"Nonmedis",
+        "lokasi":"RS huhuhu",
+        "gambar":"public/itemImg-18.jpg",
+        "deskripsi":"ini mesin EKG"
+    },
+    {
+        "namaBarang":"Defibrilator",
+        "jumlah":8,
+        "kategori":"Nonmedis",
+        "lokasi":"RS Lulululu",
+        "gambar":"public/itemImg-19.jpg",
+        "deskripsi":"ini defibrilator"
+    },
+    {
+        "namaBarang":"Pisau Bedah",
+        "jumlah":10,
+        "kategori":"Medis",
+        "lokasi":"RS LALALALA",
+        "gambar":"public/itemImg-20.jpg",
+        "deskripsi":"ini pisau bedah"
+    }   
+]

@@ -14,23 +14,28 @@ module.exports = {
         references:{
           model:'Items',
           key:'id'
-        }
+        },
+        allowNull:false
       },
       userId: {
         type: Sequelize.INTEGER,
         references:{
           model:'Users',
           key:'id'
-        }
+        },
+        allowNull:false
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       tanggalPinjam: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        allowNull:false
       },
       tanggalKembali: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        allowNull:false
       },
       createdAt: {
         allowNull: false,

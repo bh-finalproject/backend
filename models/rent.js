@@ -1,4 +1,5 @@
 'use strict';
+const moment = require('moment')
 const {
   Model
 } = require('sequelize');
@@ -16,11 +17,75 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Rent.init({
-    itemId: DataTypes.INTEGER,
-    userId: DataTypes.INTEGER,
-    status: DataTypes.STRING,
-    tanggalPinjam: DataTypes.DATE,
-    tanggalKembali: DataTypes.DATE
+    itemId: {
+      type:DataTypes.INTEGER,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        }
+      }
+    },
+    userId: {
+      type:DataTypes.INTEGER,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        }
+      }
+    },
+    status: {
+      type:DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        },
+        notIn:{
+          args:[["Sedang Dipinjam","Sudah Dikembalikan","Belum Dikembalikan"]],
+          msg:'Status tidak tepat'
+        
+        }
+      }
+    },
+    tanggalPinjam: {
+      type:DataTypes.DATE,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        }
+      }
+    },
+    tanggalKembali: {
+      type:DataTypes.DATE,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        },
+        isAfter:{
+          args: moment().add(1,'days'),
+          msg:'Tanggal kurang dari hari ini'
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Rent',

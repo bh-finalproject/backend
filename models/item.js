@@ -15,12 +15,73 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Item.init({
-    namaBarang: DataTypes.STRING,
-    jumlah: DataTypes.INTEGER,
-    kategori: DataTypes.STRING,
-    lokasi: DataTypes.STRING,
-    gambar: DataTypes.STRING,
-    deskripsi: DataTypes.TEXT
+    namaBarang: {
+      type:DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        }
+      }
+    },
+    jumlah: {
+      type:DataTypes.INTEGER,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        },
+        min:{
+          args:[0],
+          msg:'Minimum 0'
+        }
+      }
+    },
+    kategori: {
+      type:DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        }
+      }
+    },
+    lokasi: {
+      type:DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        }
+      }
+    },
+    gambar: {
+      type:DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        }
+      }
+    },
+    deskripsi: {
+      type:DataTypes.TEXT
+    }
   }, {
     sequelize,
     modelName: 'Item',
