@@ -1,6 +1,6 @@
 const { comparePassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
-const {User,UserData} = require('../models')
+const {User,UserData, Item} = require('../models')
 
 class UserController{
     static async userLogin(req,res,next){
@@ -35,6 +35,16 @@ class UserController{
             const createUser = await User.create({userId:createUserData.id})
 
             res.status(201).json({ message: "Register account success" })
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    static async getAllItems(req,res,next){
+        try {
+            const allItems = await Item.findAll()
+
+            res.status(200).json(allItems)
         } catch (err) {
             next(err)
         }
