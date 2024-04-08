@@ -7,7 +7,7 @@ userRouter.post('/login', UserController.userLogin)
 userRouter.post('/register',UserController.userRegister)
 userRouter.get('/items',authentication,UserController.getAllItems)
 userRouter.get('/item/:id',authentication,UserController.getItemDetail)
-// userRouter.post('/items/:id',()=>{})
+// userRouter.post('/rent-items',()=>{})
 
 
 module.exports = userRouter

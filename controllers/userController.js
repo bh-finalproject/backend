@@ -1,6 +1,7 @@
 const { comparePassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
 const {User,UserData, Item} = require('../models')
+const UserServices = require('../services/userServices')
 
 class UserController{
     static async userLogin(req,res,next){
@@ -42,9 +43,7 @@ class UserController{
 
     static async getAllItems(req,res,next){
         try {
-            const allItems = await Item.findAll({
-                attributes:['id','namaBarang','jumlah','kategori','gambar',]
-            })
+            const allItems = await UserServices.getAllItemPaginated(req.query)
 
             res.status(200).json(allItems)
         } catch (err) {
