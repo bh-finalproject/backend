@@ -11,6 +11,9 @@ function errorHandler(err,req,res,next){
             status = 400
             message = "Invalid email or password"
             break;
+        case "TokenExpiredError":
+            status = 401
+            message = "Authentication Error"
         case "JsonWebTokenError":
         case "AuthenticationError":
             status = 401

@@ -42,9 +42,21 @@ class UserController{
 
     static async getAllItems(req,res,next){
         try {
-            const allItems = await Item.findAll()
+            const allItems = await Item.findAll({
+                attributes:['id','namaBarang','jumlah','kategori','gambar',]
+            })
 
             res.status(200).json(allItems)
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    static async getItemDetail(req,res,next){
+        try {
+            const getItem = await Item.findByPk(req.params.id)
+
+            res.status(200).json(getItem)
         } catch (err) {
             next(err)
         }
