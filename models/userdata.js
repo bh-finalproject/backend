@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       UserData.hasOne(models.User,{foreignKey:'userId'})
       UserData.hasOne(models.Admin,{foreignKey:'userId'})
+      UserData.hasMany(models.Rent,{foreignKey:'userId'})
     }
   }
   UserData.init({

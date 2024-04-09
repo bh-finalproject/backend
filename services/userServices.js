@@ -1,4 +1,4 @@
-const {User,UserData, Item} = require('../models')
+const {User,UserData, Item, Rent} = require('../models')
 const { Op } = require("sequelize");
 
 
@@ -58,6 +58,32 @@ class UserServices{
        } catch (error) {
             return error
        }
+    }
+
+    static async getItemForRent(ids){
+        try {
+            const itemsForRent = await Item.findAll({where:{id:ids},
+            attributes:['id','namaBarang','jumlah','kategori','gambar']})
+
+            return itemsForRent
+        } catch (err) {
+            return err
+        }
+    }
+
+    static async postItemRent(items,t){
+       try {
+        const postItems = await Rent.bulkCreate(items,{transaction:t})
+        await t.commit()
+        
+
+       } catch (err) {
+        await t.rollback()
+        console.log(err)
+        return err
+       }
+        
+
     }
 }
 

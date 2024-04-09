@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Rent.belongsTo(models.Item)
-      Rent.belongsTo(models.User)
+      Rent.belongsTo(models.Item,{foreignKey:'itemId'})
+      Rent.belongsTo(models.UserData,{foreignKey:'userId'})
     }
   }
   Rent.init({
@@ -89,6 +89,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Rent',
+    hooks:{
+      beforeBulkCreate:(rents)=>{
+        rents.forEach(rent=>{
+          rent.status = "Sedang Dipinjam"
+        })
+      }
+    }
   });
   return Rent;
 };

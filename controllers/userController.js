@@ -1,7 +1,9 @@
 const { comparePassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
-const {User,UserData, Item} = require('../models')
+const {sequelize, UserData, User} = require('../models')
 const UserServices = require('../services/userServices')
+
+
 
 class UserController{
     static async userLogin(req,res,next){
@@ -55,7 +57,38 @@ class UserController{
         try {
             const getItem = await Item.findByPk(req.params.id)
 
+            if (!getItem) throw{name:"NotFound"}
             res.status(200).json(getItem)
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    static async getItemRent(req,res,next){
+        const {ids} = req.body
+        try {
+            const getItemRent = await UserServices.getItemForRent(ids)
+            if (!getItemRent) throw{name:"NotFound"}
+            res.status(200).json(getItemRent)
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    static async postItemRent(req,res,next){
+        let {items} = req.body
+        const ids = items.map(el=>{
+            return el.id
+        })
+        
+        try {
+            const t = await sequelize.transaction()
+            const getItemRent = await UserServices.getItemForRent(ids)
+            if (!getItemRent) throw{name:"NotFound"}
+
+            await UserServices.postItemRent(items,t)
+
+            res.status(201).json({message:"Rent process success"})
         } catch (err) {
             next(err)
         }

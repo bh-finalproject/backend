@@ -5,8 +5,10 @@ const userRouter = express.Router()
 
 userRouter.post('/login', UserController.userLogin)
 userRouter.post('/register',UserController.userRegister)
-userRouter.get('/items',authentication,UserController.getAllItems)
-userRouter.get('/item/:id',authentication,UserController.getItemDetail)
+userRouter.get('/items',UserController.getAllItems)
+userRouter.get('/item/:id',UserController.getItemDetail)
+userRouter.get('/item-for-rent',authentication,UserController.getItemRent)
+userRouter.post('/item-for-rent',authentication, UserController.postItemRent)
 // userRouter.post('/rent-items',()=>{})
 
 
