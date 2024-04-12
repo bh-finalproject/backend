@@ -60,12 +60,13 @@ class UserServices{
        }
     }
 
-    static async getItemForRent(ids){
+    static async getItemForRent(id){
         try {
-            const itemsForRent = await Item.findAll({where:{id:ids},
-            attributes:['id','namaBarang','jumlah','kategori','gambar']})
+            const rentedItems = await Rent.findAll({where:{userId:id},
+                include:[{model:Item, attributes:['namaBarang','gambar']}],
+            attributes:['id','status']})
 
-            return itemsForRent
+            return rentedItems
         } catch (err) {
             throw err
         }

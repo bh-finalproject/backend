@@ -65,10 +65,9 @@ class UserController{
     }
 
     static async getItemRent(req,res,next){
-        const {ids} = req.body
+        const {id} = req.body
         try {
-            const getItemRent = await UserServices.getItemForRent(ids)
-            if (!getItemRent) throw{name:"NotFound"}
+            const getItemRent = await UserServices.getItemForRent(id)
             res.status(200).json(getItemRent)
         } catch (err) {
             next(err)
