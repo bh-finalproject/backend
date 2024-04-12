@@ -36,13 +36,13 @@ function errorHandler(err,req,res,next){
             status = 404
             message = "Data not found"
             break;
-        case "AlreadyJoin":
+        case "ItemZero":
             status = 400
-            message = "You already joined this activity"
+            message = "Item not available"
             break;
-        case "AlreadyClaimed":
+        case "AlreadyReturned":
             status = 400
-            message = "You already claimed this reward"
+            message = "You already returned this item"
             break;
         case "Forbidden":
             status = 403

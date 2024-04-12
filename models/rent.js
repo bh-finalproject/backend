@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty:{
           msg:'Tidak boleh kosong'
         },
-        notIn:{
+        isIn:{
           args:[["Sedang Dipinjam","Sudah Dikembalikan","Belum Dikembalikan"]],
           msg:'Status tidak tepat'
         

@@ -93,6 +93,26 @@ class UserController{
             next(err)
         }
     }
+
+    static async patchRentReturn(req,res,next){
+        try {
+            const t = await sequelize.transaction()
+            const getRentItem = await UserServices.getRentItem(req.params.id)
+            
+            if (!getRentItem) throw{name:"NotFound"}
+            // console.log(getRentItem)
+            if (getRentItem.status == "Sudah Dikembalikan"){
+                throw{name:"AlreadyReturned"}
+            }
+
+            await UserServices.patchRentReturn(req.params.id,t)
+
+            res.status(200).json({message:"Item has been returned"})
+        } catch (err) {
+            next(err)
+            
+        }
+    }
 }
 
 module.exports = UserController

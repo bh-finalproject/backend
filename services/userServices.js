@@ -56,7 +56,7 @@ class UserServices{
             return data
         
        } catch (error) {
-            return error
+            throw err
        }
     }
 
@@ -67,23 +67,53 @@ class UserServices{
 
             return itemsForRent
         } catch (err) {
-            return err
+            throw err
         }
     }
 
     static async postItemRent(items,t){
        try {
+        for (let item of items){
+            let getItem = await Item.findByPk(item.itemId)
+            if (getItem.jumlah < 1) throw{name:"ItemZero"}
+
+            await getItem.decrement('jumlah',{by:1},{transaction:t})
+        }
+
         const postItems = await Rent.bulkCreate(items,{transaction:t})
+        
+        
         await t.commit()
         
 
        } catch (err) {
         await t.rollback()
-        console.log(err)
-        return err
+        // console.log(err)
+        throw err
        }
-        
+    }
 
+    static async getRentItem(id){
+        try {
+            const getRent = await Rent.findByPk(id)
+            return getRent
+        } catch (err) {
+            throw err
+        }
+    }
+
+    static async patchRentReturn(id,t){
+        try {
+            let patchRent = await Rent.update({status:'Sudah Dikembalikan'},{where:{id:id}},{transaction:t})
+            const getRent = await this.getRentItem(id)
+            const getItem = await Item.findByPk(getRent.itemId)
+            await getItem.increment('jumlah',{by:1},{transaction:t})
+
+            await t.commit()
+        } catch (err) {
+            await t.rollback()
+            throw err
+        }
     }
 }
 
