@@ -1,4 +1,4 @@
-const {User,UserData, Item, Rent} = require('../models')
+const {User,UserData, Item, Rent, sequelize} = require('../models')
 const { Op } = require("sequelize");
 
 
@@ -60,12 +60,32 @@ class UserServices{
        }
     }
 
-    static async getItemForRent(id){
+    static async getItemForRent(ids){
+        try {
+            const rentedItems = await Item.findAll({where:{id:{[Op.in]:ids}}})
+
+            return rentedItems
+        } catch (err) {
+            throw err
+        }
+    }
+
+    static async getRentedItems(id){
         try {
             const rentedItems = await Rent.findAll({where:{userId:id},
-                include:[{model:Item, attributes:['namaBarang','gambar']}],
-            attributes:['id','status']})
-
+                include:[{model:Item, attributes:['namaBarang','gambar']}]})
+            // const rentedItems = await sequelize.query(`
+            // SELECT 
+            // r.id,
+            // r.status,
+            // i."namaBarang",
+            // i.lokasi,
+            // r."tanggalPinjam",
+            // r."tanggalKembali"
+            // FROM "Rents" as r 
+            // left join "Items" i on r."itemId" = i.id
+            // where r."userId" = ${id}
+            // `)
             return rentedItems
         } catch (err) {
             throw err

@@ -1,7 +1,7 @@
 function errorHandler(err,req,res,next){
     let status = 500;
     let message = "Internal Server Error"
-    console.log(err)
+    console.log(err,'<<<<<ERROR')
     switch(err.name){
         case "cannotEmpty":
             status = 400

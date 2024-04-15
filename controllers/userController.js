@@ -1,6 +1,6 @@
 const { comparePassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
-const {sequelize, UserData, User} = require('../models')
+const {sequelize, UserData, User,Item} = require('../models')
 const UserServices = require('../services/userServices')
 
 
@@ -11,9 +11,10 @@ class UserController{
             const {email,password} = req.body
             if (!email || !password) throw{name:"EmailPasswordInvalid"}
             const getUserData = await UserData.findOne({where:{email}})
+            if (!getUserData) throw{name:"AuthenticationError"}
             const getUser = await User.findOne({where:{userId:getUserData.id}})
 
-            if (!getUser || !getUserData) throw{name:"AuthenticationError"}
+            if (!getUser ) throw{name:"AuthenticationError"}
 
             const verifPass = comparePassword(password,getUserData.password)
 
@@ -67,7 +68,7 @@ class UserController{
     static async getItemRent(req,res,next){
         const {id} = req.body
         try {
-            const getItemRent = await UserServices.getItemForRent(id)
+            const getItemRent = await UserServices.getRentedItems(id)
             res.status(200).json(getItemRent)
         } catch (err) {
             next(err)
@@ -77,13 +78,14 @@ class UserController{
     static async postItemRent(req,res,next){
         let {items} = req.body
         const ids = items.map(el=>{
-            return el.id
+            return el.itemId
         })
         
         try {
             const t = await sequelize.transaction()
             const getItemRent = await UserServices.getItemForRent(ids)
-            if (!getItemRent) throw{name:"NotFound"}
+            console.log(getItemRent)
+            if (!getItemRent || getItemRent.length == 0 || getItemRent.length != ids.length) throw{name:"NotFound"}
 
             await UserServices.postItemRent(items,t)
 
