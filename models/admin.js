@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Admin',
+    hooks:{
+      beforeCreate:(admin)=>{
+        admin.role = 'Admin'
+      }
+    }
   });
   return Admin;
 };

@@ -31,6 +31,9 @@ class UserServices{
 
             paramQuerySQL.order = query;
         }
+        else{
+            paramQuerySQL.order = [['id','ASC']]
+        }
 
         // pagination
         if (page !== '' && typeof page !== 'undefined') {

@@ -5,7 +5,7 @@ const errorHandler = require('../middlewares/errorHandler')
 const router = express.Router()
 
 router.use('/user',userRouter)
-// router.use('/admin',adminRouter)
+router.use('/admin',adminRouter)
 
 router.use(errorHandler)
 
