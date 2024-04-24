@@ -1,7 +1,10 @@
 const { comparePassword } = require('../helpers/bcrypt')
+const {cookienize} = require('../helpers/cookies')
 const { signToken } = require('../helpers/jwt')
 const {sequelize, UserData, Admin,Item} = require('../models')
 const AdminServices = require('../services/adminServices')
+const UserServices = require('../services/userServices')
+
 
 
 class AdminController{
@@ -19,9 +22,12 @@ class AdminController{
 
             if (!verifPass) throw{name:"AuthenticationError"}
 
-            const access_token = signToken({email:getUserData.email})
+            let access_token = signToken({email:getUserData.email})
+            
+            const cookieString = cookienize(access_token)
+            res.cookie(cookieString);
 
-            res.status(200).json({access_token:`Bearer ${access_token}`})
+            res.status(200).json({message:`Login Successful`})
         } catch (err) {
             next(err)
         }
@@ -29,8 +35,8 @@ class AdminController{
 
     static async postRegister(req,res,next){
         try {
-            const {email, password,phoneNumber } = req.body
-            if (!email || !password || !phoneNumber) throw{name:"cannotEmpty"}
+            const {username,email, password,phoneNumber } = req.body
+            if (!username || !email || !password || !phoneNumber) throw{name:"cannotEmpty"}
 
             const createUserData = await UserData.create(req.body)
 
@@ -111,7 +117,78 @@ class AdminController{
             next(err)
             
         }
+        
     }
+    static async postAddItem(req,res,next){
+        try {
+            const t = await sequelize.transaction()
+            const{namaBarang, jumlah, kategori, lokasi, deskripsi} = req.body
+            const gambar = 'items/'+req.file.filename
+
+            if(!namaBarang || !jumlah || !kategori || !lokasi || !deskripsi || !gambar){
+                throw{name:"cannotEmpty"}
+            }
+
+            const data = await AdminServices.postAddItem(req.body, gambar,t)
+
+
+            res.status(201).json(data)
+
+
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    static async postEditItem(req,res,next){
+        try {
+            const t = await sequelize.transaction()
+            const {id} = req.params
+            const getItem = await Item.findByPk(id)
+            if (!getItem){
+                throw{name:"NotFound"}
+            }
+            let gambar = ''
+            const{namaBarang, jumlah, kategori, lokasi, deskripsi} = req.body
+            if(!req.file){
+                gambar = getItem.gambar
+            }
+            else{
+                gambar = 'items/'+req.file.filename
+            }
+
+            if(!namaBarang || !jumlah || !kategori || !lokasi || !deskripsi || !gambar){
+                throw{name:"cannotEmpty"}
+            }
+
+            const data = await AdminServices.postEditItem(req.body, gambar,id,t)
+            const result = {
+                message:"success",
+                data
+            }
+            res.status(200).json(result)
+
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    static async deleteItem(req,res,next){
+        try {
+            const t = await sequelize.transaction()
+            const {id} = req.params
+            const getItem = await Item.findByPk(id)
+            if (!getItem) throw{name:"NotFound"}
+
+            const data = await AdminServices.deleteItem(id, t)
+
+            res.status(200).json({message:"Item has been deleted"})
+
+        } catch (err) {
+            next(err)
+        }
+    }
+
 }
 
 module.exports = AdminController

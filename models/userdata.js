@@ -19,7 +19,19 @@ module.exports = (sequelize, DataTypes) => {
   }
   UserData.init({
     username: {
-      type:DataTypes.STRING
+      type:DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        }
+      },
+      unique:{
+        msg:'Username sudah terdaftar'
+      }
     },
     email: {
       type:DataTypes.STRING,

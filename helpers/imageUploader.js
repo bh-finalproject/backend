@@ -10,6 +10,6 @@ let storageItemPhoto =  multer.diskStorage({
     }
 })
 
-const uploadItemPhoto = multer({storage:storageItemPhoto}).single('itemImg')
+const uploadItemPhoto = multer({storage:storageItemPhoto}).single('gambar')
 
 module.exports = {uploadItemPhoto}

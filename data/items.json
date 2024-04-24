@@ -4,7 +4,7 @@
         "jumlah":5,
         "kategori":"Medis",
         "lokasi":"RS LALALALA",
-        "gambar":"public/itemImg-1.jpg",
+        "gambar":"items/itemImg-1.jpg",
         "deskripsi":"ini Stetoskop"
     },
     {
@@ -12,7 +12,7 @@
         "jumlah":2,
         "kategori":"Nonmedis",
         "lokasi":"RS Lilili",
-        "gambar":"public/itemImg-2.jpg",
+        "gambar":"items/itemImg-2.jpg",
         "deskripsi":"ini Kursi Roda"
     },
     {
@@ -20,7 +20,7 @@
         "jumlah":10,
         "kategori":"Medis",
         "lokasi":"RS hahahaha",
-        "gambar":"public/itemImg-3.jpg",
+        "gambar":"items/itemImg-3.jpg",
         "deskripsi":"ini jarum lho"
     },
     {
@@ -28,7 +28,7 @@
         "jumlah":3,
         "kategori":"Nonmedis",
         "lokasi":"RS Lilili",
-        "gambar":"public/itemImg-4.jpg",
+        "gambar":"items/itemImg-4.jpg",
         "deskripsi":"ini rak aluminum"
     },
     {
@@ -36,7 +36,7 @@
         "jumlah":1,
         "kategori":"Nonmedis",
         "lokasi":"RS hahaha",
-        "gambar":"public/itemImg-5.jpg",
+        "gambar":"items/itemImg-5.jpg",
         "deskripsi":"ini Kasur"
     },
     {
@@ -44,7 +44,7 @@
         "jumlah":20,
         "kategori":"Medis",
         "lokasi":"RS Lilili",
-        "gambar":"public/itemImg-6.jpg",
+        "gambar":"items/itemImg-6.jpg",
         "deskripsi":"ini Gunting medis"
     },
     {
@@ -52,7 +52,7 @@
         "jumlah":6,
         "kategori":"Medis",
         "lokasi":"RS Lulululu",
-        "gambar":"public/itemImg-7.jpg",
+        "gambar":"items/itemImg-7.jpg",
         "deskripsi":"ini Tabung Oksigen"
     },
     {
@@ -60,7 +60,7 @@
         "jumlah":8,
         "kategori":"Medis",
         "lokasi":"RS Lilili",
-        "gambar":"public/itemImg-8.jpg",
+        "gambar":"items/itemImg-8.jpg",
         "deskripsi":"ini bor tulang"
     },
     {
@@ -68,7 +68,7 @@
         "jumlah":2,
         "kategori":"Medis",
         "lokasi":"RS Lilili",
-        "gambar":"public/itemImg-9.jpg",
+        "gambar":"items/itemImg-9.jpg",
         "deskripsi":"ini Bor Tulang"
     },
     {
@@ -76,7 +76,7 @@
         "jumlah":15,
         "kategori":"Medis",
         "lokasi":"RS Lulululu",
-        "gambar":"public/itemImg-10.jpg",
+        "gambar":"items/itemImg-10.jpg",
         "deskripsi":"ini Kateter"
     },
     {
@@ -84,7 +84,7 @@
         "jumlah":1,
         "kategori":"Medis",
         "lokasi":"RS hahaha",
-        "gambar":"public/itemImg-11.jpg",
+        "gambar":"items/itemImg-11.jpg",
         "deskripsi":"ini kamera endoskopi"
     },
     {
@@ -92,7 +92,7 @@
         "jumlah":3,
         "kategori":"Medis",
         "lokasi":"RS hihihi",
-        "gambar":"public/itemImg-12.jpg",
+        "gambar":"items/itemImg-12.jpg",
         "deskripsi":"ini mesin x-ray"
     },
     {
@@ -100,7 +100,7 @@
         "jumlah":4,
         "kategori":"Medis",
         "lokasi":"RS Lulululu",
-        "gambar":"public/itemImg-13.jpg",
+        "gambar":"items/itemImg-13.jpg",
         "deskripsi":"ini mesin MRI"
     },
     {
@@ -108,7 +108,7 @@
         "jumlah":22,
         "kategori":"Nonmedis",
         "lokasi":"RS hahaha",
-        "gambar":"public/itemImg-14.jpg",
+        "gambar":"items/itemImg-14.jpg",
         "deskripsi":"ini jas lab"
     },
     {
@@ -116,7 +116,7 @@
         "jumlah":50,
         "kategori":"Nonmedis",
         "lokasi":"RS Lololo",
-        "gambar":"public/itemImg-15.jpg",
+        "gambar":"items/itemImg-15.jpg",
         "deskripsi":"ini botol kosong"
     },
     {
@@ -124,7 +124,7 @@
         "jumlah":9,
         "kategori":"Nonmedis",
         "lokasi":"RS hahaha",
-        "gambar":"public/itemImg-16.jpg",
+        "gambar":"items/itemImg-16.jpg",
         "deskripsi":"ini termometer"
     },
     {
@@ -132,7 +132,7 @@
         "jumlah":4,
         "kategori":"Nonmedis",
         "lokasi":"RS Lulululu",
-        "gambar":"public/itemImg-17.jpg",
+        "gambar":"items/itemImg-17.jpg",
         "deskripsi":"ini tensimeter"
     },
     {
@@ -140,7 +140,7 @@
         "jumlah":6,
         "kategori":"Nonmedis",
         "lokasi":"RS huhuhu",
-        "gambar":"public/itemImg-18.jpg",
+        "gambar":"items/itemImg-18.jpg",
         "deskripsi":"ini mesin EKG"
     },
     {
@@ -148,7 +148,7 @@
         "jumlah":8,
         "kategori":"Nonmedis",
         "lokasi":"RS Lulululu",
-        "gambar":"public/itemImg-19.jpg",
+        "gambar":"items/itemImg-19.jpg",
         "deskripsi":"ini defibrilator"
     },
     {
@@ -156,7 +156,7 @@
         "jumlah":10,
         "kategori":"Medis",
         "lokasi":"RS LALALALA",
-        "gambar":"public/itemImg-20.jpg",
+        "gambar":"items/itemImg-20.jpg",
         "deskripsi":"ini pisau bedah"
     }   
 ]

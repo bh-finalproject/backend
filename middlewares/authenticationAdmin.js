@@ -1,13 +1,19 @@
+const { decookienize } = require("../helpers/cookies")
 const { verifyToken } = require("../helpers/jwt")
 const { UserData, Admin } = require('../models')
 
+
+
 async function authenticationAdmin(req, res, next) {
     try {
-        let { access_token } = req.headers
-        // console.log(access_token)
-        if (!access_token) throw ({ name: "AuthenticationError" })
+        // console.log(req.headers,"<<<<HEADERS")
+        let cookie = req.headers.cookie
 
+        let {access_token} = decookienize(cookie)
+        
         access_token = access_token.split(' ')[1]
+        if(!access_token) throw({name:"AuthenticationError"})
+
         const verified = verifyToken(access_token)
         if (!verified) throw ({ name: "AuthenticationError" })
         

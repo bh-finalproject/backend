@@ -1,6 +1,19 @@
-const app = require('../app')
+const {app }= require('../app')
 const port = process.env.PORT || 3000
 
+// const server = 
 app.listen(port,()=>{
     console.log(`listening ${port}`)
 })
+
+// process.on("SIGTERM", expressGraceful(server));
+// process.on("SIGINT", expressGraceful(server));
+
+// function expressGraceful(server) {
+//     return () => {
+//       console.log("server is shutting down");
+//       server.close();
+//     };
+//   }
+
+// module.exports = {server}

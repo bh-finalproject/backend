@@ -1,12 +1,32 @@
 const request = require('supertest')
-const app = require('../app')
+const { app, baseDir} = require('../app')
 const { sequelize } = require('../models')
 const { hashPassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
+const path =  require('path');
+const {cookienize} = require('../helpers/cookies')
+// const {server, expressGraceful} = require('../bin/www')
+
+
 
 const userDataSingle = {
     email:'hafiz@mail.com'
 }
+
+let server, agent;
+
+beforeEach((done) => {
+    server = app.listen(3000, (err) => {
+      if (err) return done(err);
+
+       agent = request.agent(server); // since the application is already listening, it should use the allocated port
+       done();
+    });
+});
+
+afterEach((done) => {
+  return server && server.close(done);
+});
 
 
 beforeAll(async()=>{
@@ -35,6 +55,7 @@ beforeAll(async()=>{
 })
 
 afterAll(async()=>{
+    
     await sequelize.queryInterface.bulkDelete('Items',null,{
         truncate:true,
         cascade:true,
@@ -61,7 +82,7 @@ describe('Admin route test',()=>{
                 password:'test123',
                 phoneNumber:'111111111'
             }
-            const response = await request(app).post('/admin/register').send(body)
+            const response = await agent.post('/admin/register').send(body)
             expect(response.status).toBe(201)
             expect(response.body).toBeInstanceOf(Object)
             expect(response.body).toHaveProperty('message','Register account success')
@@ -74,7 +95,18 @@ describe('Admin route test',()=>{
                 password:'test123',
                 phoneNumber:'111111111'
             }
-            const response = await request(app).post('/admin/register').send(body)
+            const response = await agent.post('/admin/register').send(body)
+            expect(response.status).toBe(400)
+        })
+
+        it('responds with 400 when same username',async ()=>{
+            const body = {
+                username:'test',
+                email:'testtest@mail.com',
+                password:'test123',
+                phoneNumber:'111111111'
+            }
+            const response = await agent.post('/admin/register').send(body)
             expect(response.status).toBe(400)
         })
 
@@ -84,7 +116,7 @@ describe('Admin route test',()=>{
                 password:'test123',
                 phoneNumber:'111111111'
             }
-            const response = await request(app).post('/admin/register').send(body)
+            const response = await agent.post('/admin/register').send(body)
             expect(response.status).toBe(400)
         })
 
@@ -95,7 +127,7 @@ describe('Admin route test',()=>{
                 password:'test123',
                 phoneNumber:'111111111'
             }
-            const response = await request(app).post('/admin/register').send(body)
+            const response = await agent.post('/admin/register').send(body)
             expect(response.status).toBe(400)
         })
 
@@ -106,7 +138,7 @@ describe('Admin route test',()=>{
                 password:'',
                 phoneNumber:'111111111'
             }
-            const response = await request(app).post('/admin/register').send(body)
+            const response = await agent.post('/admin/register').send(body)
             expect(response.status).toBe(400)
         })
 
@@ -117,7 +149,7 @@ describe('Admin route test',()=>{
                 password:'test',
                 phoneNumber:'111111111'
             }
-            const response = await request(app).post('/admin/register').send(body)
+            const response = await agent.post('/admin/register').send(body)
             expect(response.status).toBe(400)
         })
 
@@ -128,7 +160,7 @@ describe('Admin route test',()=>{
                 password:'test123',
                 phoneNumber:''
             }
-            const response = await request(app).post('/admin/register').send(body)
+            const response = await agent.post('/admin/register').send(body)
             expect(response.status).toBe(400)
         })
     })
@@ -139,7 +171,7 @@ describe('Admin route test',()=>{
                 email:'hafiz@mail.com',
                 password:'hafiz123',
             }
-            const response = await request(app).post('/admin/login').send(body)
+            const response = await agent.post('/admin/login').send(body)
             expect(response.status).toBe(200)
             expect(response.body).toBeInstanceOf(Object)
         })
@@ -149,7 +181,7 @@ describe('Admin route test',()=>{
                 email:'',
                 password:'hafiz123',
             }
-            const response = await request(app).post('/admin/login').send(body)
+            const response = await agent.post('/admin/login').send(body)
             expect(response.status).toBe(400)
             expect(response.body).toBeInstanceOf(Object)
         })
@@ -159,7 +191,7 @@ describe('Admin route test',()=>{
                 email:'jhon@mail.com',
                 password:'',
             }
-            const response = await request(app).post('/admin/login').send(body)
+            const response = await agent.post('/admin/login').send(body)
             expect(response.status).toBe(400)
             expect(response.body).toBeInstanceOf(Object)
         })
@@ -169,7 +201,7 @@ describe('Admin route test',()=>{
                 email:'hafiz123@mail.com',
                 password:'hafiz123',
             }
-            const response = await request(app).post('/admin/login').send(body)
+            const response = await agent.post('/admin/login').send(body)
             expect(response.status).toBe(401)
             expect(response.body).toBeInstanceOf(Object)
         })
@@ -179,7 +211,7 @@ describe('Admin route test',()=>{
                 email:'hafiz@mail.com',
                 password:'jhon',
             }
-            const response = await request(app).post('/admin/login').send(body)
+            const response = await agent.post('/admin/login').send(body)
             expect(response.status).toBe(401)
             expect(response.body).toBeInstanceOf(Object)
         })
@@ -188,7 +220,7 @@ describe('Admin route test',()=>{
 
     describe('GET /admin/items - get all available items',()=>{
         it('responds with 200 and get all items with registered admin',async()=>{
-            const response = await request(app).get('/admin/items?page[size]=5&page[number]=1')
+            const response = await agent.get('/admin/items?page[size]=5&page[number]=1')
             expect(response.status).toBe(200)
             expect(response.body).toBeInstanceOf(Object)
             expect(response.body).toHaveLength(5)
@@ -197,13 +229,13 @@ describe('Admin route test',()=>{
 
     describe('GET /admin/item/<id> - get single item detail',()=>{
         it('responds with 200 and get single item detail',async()=>{
-            const response = await request(app).get('/admin/item/1')
+            const response = await agent.get('/admin/item/1')
             expect(response.status).toBe(200)
             expect(response.body).toBeInstanceOf(Object)
         })
 
         it('responds with 404 item not exist',async()=>{
-            const response = await request(app).get('/admin/item/9999')
+            const response = await agent.get('/admin/item/9999')
             expect(response.status).toBe(404)
             expect(response.body).toBeInstanceOf(Object)
         })
@@ -212,6 +244,7 @@ describe('Admin route test',()=>{
     describe('POST /admin/item-for-rent - post items in array to rent',()=>{
         it('responds with 201 post items for rent', async()=>{
             const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
             const body = {"items":[
                 {
                     "userId" : 1,
@@ -225,7 +258,7 @@ describe('Admin route test',()=>{
                     "tanggalKembali" : "2024-04-10"
                 }
             ]}
-            const response = await request(app).post('/admin/item-for-rent').send(body).set('access_token',`Bearer ${token}`)
+            const response = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
             expect(response.status).toBe(201)
             expect(response.body).toBeInstanceOf(Object)
             expect(response.body).toHaveProperty('message','Rent process success')
@@ -233,6 +266,7 @@ describe('Admin route test',()=>{
 
         it('responds with 401 unauthorized access with random token', async()=>{
             const token = 'wleowleo'
+            const cookies = cookienize(token)
             const body = {"items":[
                 {
                     "userId" : 1,
@@ -246,13 +280,14 @@ describe('Admin route test',()=>{
                     "tanggalKembali" : "2024-04-10"
                 }
             ]}
-            const response = await request(app).post('/admin/item-for-rent').send(body).set('access_token',`Bearer ${token}`)
+            const response = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
             expect(response.status).toBe(401)
             expect(response.body).toBeInstanceOf(Object)
         } )
 
         it('responds with 404 post items for rent with id not in database', async()=>{
             const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
             const body = {"items":[
                 {
                     "userId" : 1,
@@ -266,7 +301,7 @@ describe('Admin route test',()=>{
                     "tanggalKembali" : "2024-04-10"
                 }
             ]}
-            const response = await request(app).post('/admin/item-for-rent').send(body).set('access_token',`Bearer ${token}`)
+            const response = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
             expect(response.status).toBe(404)
             expect(response.body).toBeInstanceOf(Object)
            
@@ -278,6 +313,7 @@ describe('Admin route test',()=>{
     describe('PATCH admin/return-item/:id - return rented item',()=>{
         it('response 200 return single rented item',async()=>{
             const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
             const body = {"items":[
                 {
                     "userId" : 1,
@@ -291,8 +327,8 @@ describe('Admin route test',()=>{
                     "tanggalKembali" : "2024-04-10"
                 }
             ]}
-            const r1 = await request(app).post('/admin/item-for-rent').send(body).set('access_token',`Bearer ${token}`)
-            const r2 = await request(app).patch('/admin/return-item/1').set('access_token',`Bearer ${token}`)
+            const r1 = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
+            const r2 = await agent.patch('/admin/return-item/1').set('Cookie',[cookies]) 
             expect(r2.status).toBe(200)
             expect(r2.body).toBeInstanceOf(Object)
             expect(r2.body).toHaveProperty('message','Item has been returned')
@@ -300,7 +336,9 @@ describe('Admin route test',()=>{
 
         it('response 401 unauthorized admin',async()=>{
             const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
             const wrongToken = 'wleowleo'
+            const cookiesWrong = cookienize(wrongToken)
             const body = {"items":[
                 {
                     "userId" : 1,
@@ -314,14 +352,15 @@ describe('Admin route test',()=>{
                     "tanggalKembali" : "2024-04-10"
                 }
             ]}
-            const r1 = await request(app).post('/admin/item-for-rent').send(body).set('access_token',`Bearer ${token}`)
-            const r2 = await request(app).patch('/admin/return-item/1').set('access_token',`Bearer ${wrongToken}`)
+            const r1 = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
+            const r2 = await agent.patch('/admin/return-item/1').set('Cookie',[cookiesWrong]) 
             expect(r2.status).toBe(401)
             expect(r2.body).toBeInstanceOf(Object)
         })
 
         it('response 404 rented item does not exist',async()=>{
             const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
             const body = {"items":[
                 {
                     "userId" : 1,
@@ -335,8 +374,8 @@ describe('Admin route test',()=>{
                     "tanggalKembali" : "2024-04-10"
                 }
             ]}
-            const r1 = await request(app).post('/admin/item-for-rent').send(body).set('access_token',`Bearer ${token}`)
-            const r2 = await request(app).patch('/admin/return-item/9999').set('access_token',`Bearer ${token}`)
+            const r1 = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
+            const r2 = await agent.patch('/admin/return-item/9999').set('Cookie',[cookies]) 
             expect(r2.status).toBe(404)
             expect(r2.body).toBeInstanceOf(Object)
         })
@@ -345,6 +384,7 @@ describe('Admin route test',()=>{
     describe('GET admin/rented-item - get all rented item from admin',()=>{
         it('response 200 get rented item from single admin',async()=>{
             const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
             const body = {"items":[
                 {
                     "userId" : 1,
@@ -361,15 +401,17 @@ describe('Admin route test',()=>{
             const body2 = {
                 "id":3
             }
-            const r1 = await request(app).post('/admin/item-for-rent').send(body).set('access_token',`Bearer ${token}`)
-            const r2 = await request(app).get('/admin/rented-item').send(body2).set('access_token',`Bearer ${token}`)
+            const r1 = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
+            const r2 = await agent.get('/admin/rented-item').send(body2).set('Cookie',[cookies]) 
             expect(r2.status).toBe(200)
             expect(r2.body).toBeInstanceOf(Object)
         })
 
         it('response 401 unauthorized token',async()=>{
             const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
             const wrongToken = 'wleowleo'
+            const cookiesWrong = cookienize(wrongToken)
             const body = {"items":[
                 {
                     "userId" : 1,
@@ -386,11 +428,191 @@ describe('Admin route test',()=>{
             const body2 = {
                 "id":3
             }
-            const r1 = await request(app).post('/admin/item-for-rent').send(body).set('access_token',`Bearer ${token}`)
-            const r2 = await request(app).get('/admin/rented-item').send(body2).set('access_token',`Bearer ${wrongToken}`)
+            const r1 = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
+            const r2 = await agent.get('/admin/rented-item').send(body2).set('Cookie', [cookiesWrong])
             expect(r2.status).toBe(401)
             expect(r2.body).toBeInstanceOf(Object)
         })
+
+    })
+
+    describe('POST admin/add-item - post a new item',()=>{
+        it('response 201 get rented item from single admin',async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+    
+            const r1 = await agent.post('/admin/add-item')
+            .field('namaBarang','test')
+            .field('jumlah',10)
+            .field('kategori','Medis')
+            .field('lokasi','TESTEST')
+            .field('deskripsi','testest')
+            .attach('gambar',path.resolve(baseDir,'./public/items/itemImg-1.jpg'))
+            .set('Cookie',[cookies]) 
+            expect(r1.status).toBe(201)
+            expect(r1.body).toBeInstanceOf(Object)
+            expect(r1.body).toHaveProperty('namaBarang','test')
+        })
+
+        it('response 401 unauthorized acccess',async()=>{
+            const token =''
+            const cookies = cookienize(token)
+
+            const r1 = await agent.post('/admin/add-item')
+            .set('Cookie',[cookies]) 
+            .field('namaBarang','test')
+            .field('jumlah',10)
+            .field('kategori','Medis')
+            .field('lokasi','TESTEST')
+            .field('deskripsi','testest')
+            
+            
+            expect(r1.status).toBe(401)
+            expect(r1.body).toBeInstanceOf(Object)
+            expect(r1.body).toHaveProperty('message','Authentication Error')
+        })
+
+        it('response 400 empty nama barang',async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+    
+            const r1 = await agent.post('/admin/add-item')
+            .field('namaBarang','')
+            .field('jumlah',10)
+            .field('kategori','Medis')
+            .field('lokasi','TESTEST')
+            .field('deskripsi','testest')
+            .attach('gambar',path.resolve(baseDir,'./public/items/itemImg-1.jpg'))
+            .set('Cookie',[cookies]) 
+            expect(r1.status).toBe(400)
+            expect(r1.body).toBeInstanceOf(Object)
+            expect(r1.body).toHaveProperty('message','Please fill in all the blank')
+        })
+
+    })
+
+    describe('PUT admin/edit-item/:id - edit single item',()=>{
+        it('response 200 edit one item',async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            const body = {
+                namaBarang:"Stetoskop",
+                jumlah:10,
+                kategori:"Medis",
+                lokasi:"RS LALALALA",
+                deskripsi:"ini Stetoskop",
+                gambar:''
+            }
+            const r1 = await agent.put('/admin/edit-item/1')
+            .field('namaBarang','Stetoskop')
+            .field('jumlah',10)
+            .field('kategori','Medis')
+            .field('lokasi','RS LALALALA')
+            .field('deskripsi','ini Stetoskop')
+            .set('Cookie',[cookies]) 
+            expect(r1.status).toBe(200)
+            expect(r1.body).toBeInstanceOf(Object)
+            expect(r1.body).toHaveProperty('message','success')
+            expect(r1.body).toHaveProperty('data.jumlah',10)
+        })
+
+        it('response 401 invalid token',async()=>{
+            const token = 'wleoleokljbfvdf'
+            const cookies = cookienize(token)
+            const body = {
+                namaBarang:"Stetoskop",
+                jumlah:10,
+                kategori:"Medis",
+                lokasi:"RS LALALALA",
+                deskripsi:"ini Stetoskop",
+                gambar:''
+            }
+            const r1 = await agent.put('/admin/edit-item/1')
+            .field('namaBarang','Stetoskop')
+            .field('jumlah',10)
+            .field('kategori','Medis')
+            .field('lokasi','RS LALALALA')
+            .field('deskripsi','ini Stetoskop')
+            .set('Cookie',[cookies]) 
+            expect(r1.status).toBe(401)
+            expect(r1.body).toBeInstanceOf(Object)
+            expect(r1.body).toHaveProperty('message','Authentication Error')
+        })
+
+        it('response 404 item not found',async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            // const body = {
+            //     namaBarang:"Stetoskop",
+            //     jumlah:'',
+            //     kategori:"Medis",
+            //     lokasi:"RS LALALALA",
+            //     deskripsi:"ini Stetoskop",
+            //     gambar:''
+            // }
+            const r1 = await agent.put('/admin/edit-item/9999')
+            .field('namaBarang','Stetoskop')
+            .field('jumlah',10)
+            .field('kategori','Medis')
+            .field('lokasi','RS LALALALA')
+            .field('deskripsi','ini Stetoskop')
+            .set('Cookie',[cookies]) 
+            expect(r1.status).toBe(404)
+            expect(r1.body).toBeInstanceOf(Object)
+            expect(r1.body).toHaveProperty('message','Data not found')
+        })
+
+        it('response 400 missing namaBarang',async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+           
+            const r1 = await agent.put('/admin/edit-item/1')
+            .field('namaBarang','')
+            .field('jumlah',10)
+            .field('kategori','Medis')
+            .field('lokasi','RS LALALALA')
+            .field('deskripsi','ini Stetoskop')
+            .set('Cookie',[cookies]) 
+            expect(r1.status).toBe(400)
+            expect(r1.body).toBeInstanceOf(Object)
+            expect(r1.body).toHaveProperty('message','Please fill in all the blank')
+        },40000)
+
+    })
+
+    describe('PUT admin/delete-item/:id - delete single item',()=>{
+        it('response 200 delete one item',async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+
+            const r1 = await agent.delete('/admin/delete-item/20').set('Cookie',[cookies])
+            expect(r1.status).toBe(200)
+            expect(r1.body).toBeInstanceOf(Object)
+            expect(r1.body).toHaveProperty('message','Item has been deleted')
+
+        })
+
+        it('response 401 invalid token',async()=>{
+            const token = 'wleolsdrgesrg'
+            const cookies = cookienize(token)
+            const r1 = await agent.delete('/admin/delete-item/20').set('Cookie',[cookies]) 
+            expect(r1.status).toBe(401)
+            expect(r1.body).toBeInstanceOf(Object)
+            expect(r1.body).toHaveProperty('message','Authentication Error')
+        })
+
+        it('response 404 item not found',async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            
+            const r1 = await agent.delete('/admin/delete-item/9999').set('Cookie',[cookies]) 
+            
+            expect(r1.status).toBe(404)
+            expect(r1.body).toBeInstanceOf(Object)
+            expect(r1.body).toHaveProperty('message','Data not found')
+
+        })
+
 
     })
 })

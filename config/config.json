@@ -11,7 +11,11 @@
     "password": "postgres",
     "database": "medinventory_test",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "pool":{
+      "max":20,
+      "min":0
+    }
   },
   "production": {
     "username": "root",

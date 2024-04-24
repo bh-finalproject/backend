@@ -138,6 +138,44 @@ class AdminServices{
             throw err
         }
     }
+
+    static async postAddItem(body, gambar,t){
+        try {
+            const{namaBarang, jumlah, kategori, lokasi, deskripsi} = body
+
+            const data = await Item.create({namaBarang,jumlah,kategori,lokasi,deskripsi, gambar},{transaction:t})
+
+            await t.commit()
+            return data
+        } catch (err) {
+            await t.rollback()
+            throw err
+        }
+    }
+
+    static async postEditItem(body,gambar,id,t){
+        try {
+            const{namaBarang, jumlah, kategori, lokasi, deskripsi} = body
+            const res = await Item.update({namaBarang,jumlah,kategori,lokasi,deskripsi,gambar},{where:{id}},{transaction:t})
+            await t.commit()
+            const data = await Item.findByPk(id)
+            return data
+        } catch (err) {
+            await t.rollback()
+            throw err
+        }
+    }
+
+    static async deleteItem(id, t){
+        try {
+            const data = await Item.destroy({where:{id:id}},{transaction:t})
+            await t.commit()
+            return data
+        } catch (err) {
+            await t.rollback()
+            throw err
+        }
+    }
 }
 
 module.exports = AdminServices

@@ -5,6 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cookie": "^0.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.1",
@@ -24,7 +25,8 @@
     "test": "npx jest --forceExit --detectOpenHandles --runInBand",
     "testCov": "npx jest --forceExit --detectOpenHandles --runInBand --coverage",
     "start": "nodemon bin/www",
-    "refresh": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all && nodemon bin/www"
+    "refresh": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all && nodemon bin/www",
+    "refreshTest": "npx sequelize db:migrate:undo:all --env test && npx sequelize db:migrate --env test && npm run test"
   },
   "repository": {
     "type": "git",

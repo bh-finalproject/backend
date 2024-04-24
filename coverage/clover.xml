@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1713272265978" clover="3.2.0">
-  <project timestamp="1713272265979" name="All files">
-    <metrics statements="416" coveredstatements="366" conditionals="143" coveredconditionals="108" methods="57" coveredmethods="54" elements="616" coveredelements="528" complexity="0" loc="416" ncloc="416" packages="7" files="19" classes="19"/>
+<coverage generated="1713415999046" clover="3.2.0">
+  <project timestamp="1713415999047" name="All files">
+    <metrics statements="427" coveredstatements="373" conditionals="143" coveredconditionals="108" methods="60" coveredmethods="54" elements="630" coveredelements="535" complexity="0" loc="427" ncloc="427" packages="7" files="20" classes="20"/>
     <package name="backend">
       <metrics statements="14" coveredstatements="13" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="0"/>
       <file name="app.js" path="D:\kerjaan\h8_training\final_project\backend\app.js">
@@ -23,9 +23,9 @@
       </file>
     </package>
     <package name="backend.controllers">
-      <metrics statements="116" coveredstatements="110" conditionals="52" coveredconditionals="48" methods="16" coveredmethods="16"/>
+      <metrics statements="118" coveredstatements="110" conditionals="52" coveredconditionals="48" methods="17" coveredmethods="16"/>
       <file name="adminController.js" path="D:\kerjaan\h8_training\final_project\backend\controllers\adminController.js">
-        <metrics statements="58" coveredstatements="55" conditionals="26" coveredconditionals="24" methods="8" coveredmethods="8"/>
+        <metrics statements="60" coveredstatements="55" conditionals="26" coveredconditionals="24" methods="9" coveredmethods="8"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
@@ -83,7 +83,9 @@
         <line num="107" count="1" type="stmt"/>
         <line num="109" count="1" type="stmt"/>
         <line num="111" count="1" type="stmt"/>
-        <line num="117" count="2" type="stmt"/>
+        <line num="117" count="0" type="stmt"/>
+        <line num="120" count="0" type="stmt"/>
+        <line num="126" count="2" type="stmt"/>
       </file>
       <file name="userController.js" path="D:\kerjaan\h8_training\final_project\backend\controllers\userController.js">
         <metrics statements="58" coveredstatements="55" conditionals="26" coveredconditionals="24" methods="8" coveredmethods="8"/>
@@ -148,7 +150,7 @@
       </file>
     </package>
     <package name="backend.helpers">
-      <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+      <metrics statements="17" coveredstatements="15" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="4"/>
       <file name="bcrypt.js" path="D:\kerjaan\h8_training\final_project\backend\helpers\bcrypt.js">
         <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
         <line num="1" count="2" type="stmt"/>
@@ -156,6 +158,16 @@
         <line num="5" count="10" type="stmt"/>
         <line num="9" count="4" type="stmt"/>
         <line num="12" count="2" type="stmt"/>
+      </file>
+      <file name="imageUploader.js" path="D:\kerjaan\h8_training\final_project\backend\helpers\imageUploader.js">
+        <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
       </file>
       <file name="jwt.js" path="D:\kerjaan\h8_training\final_project\backend\helpers\jwt.js">
         <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
@@ -325,21 +337,23 @@
       </file>
     </package>
     <package name="backend.routers">
-      <metrics statements="33" coveredstatements="33" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="35" coveredstatements="35" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="adminRouter.js" path="D:\kerjaan\h8_training\final_project\backend\routers\adminRouter.js">
-        <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
         <line num="4" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
         <line num="7" count="2" type="stmt"/>
         <line num="8" count="2" type="stmt"/>
         <line num="9" count="2" type="stmt"/>
         <line num="10" count="2" type="stmt"/>
         <line num="11" count="2" type="stmt"/>
         <line num="12" count="2" type="stmt"/>
-        <line num="15" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="17" count="2" type="stmt"/>
       </file>
       <file name="router.js" path="D:\kerjaan\h8_training\final_project\backend\routers\router.js">
         <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>

@@ -2,7 +2,21 @@ const { comparePassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
 const {sequelize, UserData, User,Item} = require('../models')
 const UserServices = require('../services/userServices')
+const cookie = require('cookie');
 
+
+function cookienize(token){
+    const secureCookie = true;
+    const httpOnlyCookie = true;
+    const cookieOptions = {
+      secure: secureCookie,
+      httpOnly: httpOnlyCookie,
+    };
+  
+    const cookieString = cookie.serialize('access_token', 'Bearer '+ token, cookieOptions);
+
+    return cookieString
+}
 
 
 class UserController{
@@ -21,8 +35,10 @@ class UserController{
             if (!verifPass) throw{name:"AuthenticationError"}
 
             const access_token = signToken({email:getUserData.email})
+            const cookieString = cookienize(access_token)
+            res.cookie(cookieString);
 
-            res.status(200).json({access_token:`Bearer ${access_token}`})
+            res.status(200).json({message:`Login Successful`})
 
         } catch (err) {
             next(err)
@@ -31,8 +47,8 @@ class UserController{
 
     static async userRegister(req,res,next){
         try {
-            const {email, password,phoneNumber } = req.body
-            if (!email || !password || !phoneNumber) throw{name:"cannotEmpty"}
+            const {username,email, password,phoneNumber } = req.body
+            if (!username || !email || !password || !phoneNumber) throw{name:"cannotEmpty"}
 
             const createUserData = await UserData.create(req.body)
 
