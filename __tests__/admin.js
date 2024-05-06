@@ -223,7 +223,7 @@ describe('Admin route test',()=>{
             const response = await agent.get('/admin/items?page[size]=5&page[number]=1')
             expect(response.status).toBe(200)
             expect(response.body).toBeInstanceOf(Object)
-            expect(response.body).toHaveLength(5)
+            expect(response.body.data).toHaveLength(5)
         })
     })
 
@@ -231,7 +231,7 @@ describe('Admin route test',()=>{
         it('responds with 200 and get single item detail',async()=>{
             const response = await agent.get('/admin/item/1')
             expect(response.status).toBe(200)
-            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body.data).toBeInstanceOf(Object)
         })
 
         it('responds with 404 item not exist',async()=>{
@@ -249,13 +249,15 @@ describe('Admin route test',()=>{
                 {
                     "userId" : 1,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 1,
                     "itemId" : 2,
+                    "jumlah": 1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const response = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
@@ -271,13 +273,15 @@ describe('Admin route test',()=>{
                 {
                     "userId" : 1,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 1,
                     "itemId" : 2,
+                    "jumlah": 1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const response = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
@@ -292,17 +296,67 @@ describe('Admin route test',()=>{
                 {
                     "userId" : 1,
                     "itemId" : 9999,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-09"
+                },{
+                    "userId" : 1,
+                    "itemId" : 2,
+                    "jumlah": 1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-10"
+                }
+            ]}
+            const response = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
+            expect(response.status).toBe(404)
+            expect(response.body).toBeInstanceOf(Object)
+           
+        } )
+
+        it('responds with 400 post items for item counts not enough', async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 1,
+                    "itemId" : 1,
+                    "jumlah":1000,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-09"
+                },{
+                    "userId" : 1,
+                    "itemId" : 2,
+                    "jumlah": 1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-10"
+                }
+            ]}
+            const response = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
+            expect(response.status).toBe(400)
+            expect(response.body).toBeInstanceOf(Object)
+           
+        } )
+
+        it('responds with 400 post items for return date <= today', async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 1,
+                    "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
                     "tanggalKembali" : "2024-04-09"
                 },{
                     "userId" : 1,
                     "itemId" : 2,
+                    "jumlah": 1,
                     "tanggalPinjam" : "2024-04-08",
                     "tanggalKembali" : "2024-04-10"
                 }
             ]}
             const response = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
-            expect(response.status).toBe(404)
+            expect(response.status).toBe(400)
             expect(response.body).toBeInstanceOf(Object)
            
         } )
@@ -318,13 +372,15 @@ describe('Admin route test',()=>{
                 {
                     "userId" : 1,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 1,
                     "itemId" : 2,
+                    "jumlah": 1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const r1 = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
@@ -343,13 +399,15 @@ describe('Admin route test',()=>{
                 {
                     "userId" : 1,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 1,
                     "itemId" : 2,
+                    "jumlah": 1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const r1 = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
@@ -364,14 +422,16 @@ describe('Admin route test',()=>{
             const body = {"items":[
                 {
                     "userId" : 1,
-                    "itemId" : 1,
+                    "itemId" : 1000,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 1,
                     "itemId" : 2,
+                    "jumlah": 1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const r1 = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies]) 
@@ -389,13 +449,15 @@ describe('Admin route test',()=>{
                 {
                     "userId" : 1,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 1,
                     "itemId" : 2,
+                    "jumlah": 1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const body2 = {
@@ -416,13 +478,15 @@ describe('Admin route test',()=>{
                 {
                     "userId" : 1,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 1,
                     "itemId" : 2,
+                    "jumlah": 1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const body2 = {
@@ -451,7 +515,7 @@ describe('Admin route test',()=>{
             .set('Cookie',[cookies]) 
             expect(r1.status).toBe(201)
             expect(r1.body).toBeInstanceOf(Object)
-            expect(r1.body).toHaveProperty('namaBarang','test')
+            expect(r1.body.data).toHaveProperty('namaBarang','test')
         })
 
         it('response 401 unauthorized acccess',async()=>{
@@ -512,7 +576,7 @@ describe('Admin route test',()=>{
             .set('Cookie',[cookies]) 
             expect(r1.status).toBe(200)
             expect(r1.body).toBeInstanceOf(Object)
-            expect(r1.body).toHaveProperty('message','success')
+            expect(r1.body).toHaveProperty('message','Success')
             expect(r1.body).toHaveProperty('data.jumlah',10)
         })
 

@@ -1,26 +1,40 @@
-const nodemailer  = require('nodemailer')
+const nodemailer  = require('nodemailer');
+const { getStillRent } = require('../services/userServices');
 
 //setup transporter
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: 'hotmail',
     auth: {
-      user: 'hello@example.com',
+      user: 'mediinventory_bithealth@outlook.com',
       pass: process.env.NODEMAILER_PASS
     }
   });
-
-// setup mail options
+  
 const mailOptions = {
-    from: 'hello@example.com',
-    to: '',
-    subject: '',
-    text: ''
+    from: 'mediinventory_bithealth@outlook.com',
+    to: 'hafiz.fadillah@bithealth.co.id',
+    subject: 'test_kirim',
+    text: 'testing nodemailer'
   };
 
-class NodeMailer{
-    static sendNewRent(email, items){
+// class NodeMailer{
+//     static sendNewRent(email, items){
 
-    }
+//     }
+// }
+const testSend = async ()=>{
+
+    const allInRent = await getStillRent()
+    console.log(allInRent)
+    // transporter.sendMail(mailOptions, function(error, info){
+    //     if (error) {
+    //    console.log(error);
+    //     } else {
+    //       console.log('Email sent: ' + info.response);
+    //       // do something useful
+    //     }
+    //   });
+    
 }
 
-module.exports = NodeMailer
+module.exports = testSend

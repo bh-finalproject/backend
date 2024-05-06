@@ -15,6 +15,9 @@ function errorHandler(err,req,res,next){
             status = 401
             message = "Authentication Error"
         case "JsonWebTokenError":
+            status = 401
+            message = "Authentication Error"
+            break;
         case "AuthenticationError":
             status = 401
             message = "Authentication Error"
@@ -27,7 +30,6 @@ function errorHandler(err,req,res,next){
             status = 400,
             message = "Something went wrong, please use the valid format"
             break;
-            case "SequelizeValidationError":
         case "SequelizeUniqueConstraintError":
             status = 400
             message = err.errors[0].message
@@ -40,6 +42,10 @@ function errorHandler(err,req,res,next){
             status = 400
             message = "Item not available"
             break;
+        case "NotEnough":
+            status = 400
+            message = "Stock not enough"
+            break;
         case "AlreadyReturned":
             status = 400
             message = "You already returned this item"
@@ -49,7 +55,7 @@ function errorHandler(err,req,res,next){
             message = "Access Forbidden"
             break;
     }
-    
+
     res.status(status).json({message})
 };
 

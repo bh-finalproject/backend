@@ -29,6 +29,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      jumlah:{
+        type: Sequelize.INTEGER,
+        allowNull:false
+      },
       tanggalPinjam: {
         type: Sequelize.DATE,
         allowNull:false

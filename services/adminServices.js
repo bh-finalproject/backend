@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 
 class AdminServices{
     static async getAllItemPaginated(query){
-        const { filter, sort, page } = query;
+        const { filter, sort, page,search } = query;
         const paramQuerySQL = {};
         let limit;
         let offset;
@@ -50,6 +50,9 @@ class AdminServices{
             offset = 0;
             paramQuerySQL.limit = limit;
             paramQuerySQL.offset = offset;
+        }
+        if (search !== '' && typeof search !== 'undefined'){
+            paramQuerySQL.where['namaBarang'] = {[Op.iLike]:`%${search}%`}
         }
        
         paramQuerySQL.attributes = ['id','namaBarang','jumlah','kategori','gambar']
@@ -99,11 +102,12 @@ class AdminServices{
         for (let item of items){
             let getItem = await Item.findByPk(item.itemId)
             if (getItem.jumlah < 1) throw{name:"ItemZero"}
+            let jumlah = item.jumlah
+            item.status = "Sedang Dipinjam"
 
-            await getItem.decrement('jumlah',{by:1},{transaction:t})
+            await Rent.create(item,{transaction:t} )
+            await getItem.decrement('jumlah',{by:jumlah},{transaction:t})
         }
-
-        const postItems = await Rent.bulkCreate(items,{transaction:t})
         
         
         await t.commit()
@@ -130,7 +134,7 @@ class AdminServices{
             let patchRent = await Rent.update({status:'Sudah Dikembalikan'},{where:{id:id}},{transaction:t})
             const getRent = await this.getRentItem(id)
             const getItem = await Item.findByPk(getRent.itemId)
-            await getItem.increment('jumlah',{by:1},{transaction:t})
+            await getItem.increment('jumlah',{by:getRent.jumlah},{transaction:t})
 
             await t.commit()
         } catch (err) {

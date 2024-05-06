@@ -58,6 +58,22 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    jumlah:{
+      type:DataTypes.INTEGER,
+      allowNull: false,
+      validate:{
+        notNull:{
+          msg:'Tidak boleh null'
+        },
+        notEmpty:{
+          msg:'Tidak boleh kosong'
+        },
+        min:{
+          args:1,
+          msg:'Jumlah kurang dari 1'
+        }
+      }
+    },
     tanggalPinjam: {
       type:DataTypes.DATE,
       allowNull:false,
@@ -81,21 +97,14 @@ module.exports = (sequelize, DataTypes) => {
           msg:'Tidak boleh kosong'
         },
         isAfter:{
-          args: moment().add(1,'days'),
+          args: String(moment().add(1,'days')),
           msg:'Tanggal kurang dari hari ini'
         }
       }
     }
   }, {
     sequelize,
-    modelName: 'Rent',
-    hooks:{
-      beforeBulkCreate:(rents)=>{
-        rents.forEach(rent=>{
-          rent.status = "Sedang Dipinjam"
-        })
-      }
-    }
+    modelName: 'Rent'
   });
   return Rent;
 };

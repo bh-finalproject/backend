@@ -14,7 +14,7 @@ class AdminController{
             if (!email || !password) throw{name:"EmailPasswordInvalid"}
             const getUserData = await UserData.findOne({where:{email}})
             if (!getUserData) throw{name:"AuthenticationError"}
-            const getAdmin = await Admin.findOne({where:{userId:getUserData.id}})
+            let getAdmin = await Admin.findOne({where:{userId:getUserData.id}})
 
             if (!getAdmin ) throw{name:"AuthenticationError"}
 
@@ -26,8 +26,20 @@ class AdminController{
             
             const cookieString = cookienize(access_token)
             res.cookie(cookieString);
+            
+            getAdmin = JSON.parse(JSON.stringify(getAdmin))
 
-            res.status(200).json({message:`Login Successful`})
+            delete getAdmin["password"]
+            delete getAdmin["createdAt"]
+            delete getAdmin["updatedAt"]
+            const returnObj = {
+                status: 200,
+                message:`Login Successful`,
+                access_token,
+                data:getAdmin
+            }
+
+            res.status(200).json(returnObj)
         } catch (err) {
             next(err)
         }
@@ -42,7 +54,12 @@ class AdminController{
 
             const createAdmin = await Admin.create({userId:createUserData.id})
 
-            res.status(201).json({ message: "Register account success" })
+            const returnObj = {
+                status: 201,
+                message: "Register account success"
+            }
+
+            res.status(201).json(returnObj)
         } catch (err) {
             next(err)
         }
@@ -52,7 +69,13 @@ class AdminController{
         try {
             const allItems = await AdminServices.getAllItemPaginated(req.query)
 
-            res.status(200).json(allItems)
+            const returnObj = {
+                status: 200,
+                message: "Success",
+                data:allItems
+            }
+
+            res.status(200).json(returnObj)
         } catch (err) {
             next(err)
         }
@@ -62,7 +85,13 @@ class AdminController{
         const {id} = req.body
         try {
             const getItemRent = await AdminServices.getRentedItems(id)
-            res.status(200).json(getItemRent)
+            
+            const returnObj = {
+                status: 200,
+                message: "Success",
+                data:getItemRent
+            }
+            res.status(200).json(returnObj)
         } catch (err) {
             next(err)
         }
@@ -70,19 +99,35 @@ class AdminController{
 
     static async postItemRent(req,res,next){
         let {items} = req.body
+        const objItems = {}
         const ids = items.map(el=>{
             return el.itemId
+        })
+
+        items.forEach(el=>{
+            objItems[el.itemId] = el
         })
         
         try {
             const t = await sequelize.transaction()
             const getItemRent = await AdminServices.getItemForRent(ids)
-            console.log(getItemRent)
+            
             if (!getItemRent || getItemRent.length == 0 || getItemRent.length != ids.length) throw{name:"NotFound"}
-
+            console.log(getItemRent)
+            for (let item of getItemRent){
+                if (objItems[item.id].jumlah > item.jumlah){
+                    throw{name:"NotEnough"}
+                }
+            }
+           
             await AdminServices.postItemRent(items,t)
 
-            res.status(201).json({message:"Rent process success"})
+            const returnObj = {
+                status: 201,
+                message:"Rent process success"
+            }
+
+            res.status(201).json(returnObj)
         } catch (err) {
             next(err)
         }
@@ -93,7 +138,13 @@ class AdminController{
             const getItem = await Item.findByPk(req.params.id)
 
             if (!getItem) throw{name:"NotFound"}
-            res.status(200).json(getItem)
+
+            const returnObj = {
+                status:200,
+                message:"Success",
+                data:getItem
+            }
+            res.status(200).json(returnObj)
         } catch (err) {
             next(err)
         }
@@ -112,7 +163,12 @@ class AdminController{
 
             await AdminServices.patchRentReturn(req.params.id,t)
 
-            res.status(200).json({message:"Item has been returned"})
+            const returnObj = {
+                status:200,
+                message:"Item has been returned"
+            }
+
+            res.status(200).json(returnObj)
         } catch (err) {
             next(err)
             
@@ -131,8 +187,13 @@ class AdminController{
 
             const data = await AdminServices.postAddItem(req.body, gambar,t)
 
+            const returnObj = {
+                status:201,
+                message:"Success",
+                data
+            }
 
-            res.status(201).json(data)
+            res.status(201).json(returnObj)
 
 
         } catch (err) {
@@ -162,11 +223,12 @@ class AdminController{
             }
 
             const data = await AdminServices.postEditItem(req.body, gambar,id,t)
-            const result = {
-                message:"success",
+            const returnObj = {
+                status:200,
+                message:"Success",
                 data
             }
-            res.status(200).json(result)
+            res.status(200).json(returnObj)
 
         } catch (err) {
             next(err)
@@ -182,7 +244,11 @@ class AdminController{
 
             const data = await AdminServices.deleteItem(id, t)
 
-            res.status(200).json({message:"Item has been deleted"})
+            const returnObj = {
+                status:200,
+                message:"Item has been deleted"
+            }            
+            res.status(200).json(returnObj)
 
         } catch (err) {
             next(err)

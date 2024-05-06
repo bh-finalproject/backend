@@ -24,7 +24,7 @@ class UserController{
         try {
             const {email,password} = req.body
             if (!email || !password) throw{name:"EmailPasswordInvalid"}
-            const getUserData = await UserData.findOne({where:{email}})
+            let getUserData = await UserData.findOne({where:{email}})
             if (!getUserData) throw{name:"AuthenticationError"}
             const getUser = await User.findOne({where:{userId:getUserData.id}})
 
@@ -38,7 +38,18 @@ class UserController{
             const cookieString = cookienize(access_token)
             res.cookie(cookieString);
 
-            res.status(200).json({message:`Login Successful`})
+            getUserData = JSON.parse(JSON.stringify(getUserData))
+            delete getUserData["password"]
+            delete getUserData["createdAt"]
+            delete getUserData["updatedAt"]
+            const returnObj = {
+                status:200,
+                message:`Login Successful`,
+                access_token,
+                data:getUserData
+            }
+
+            res.status(200).json(returnObj)
 
         } catch (err) {
             next(err)
@@ -54,7 +65,11 @@ class UserController{
 
             const createUser = await User.create({userId:createUserData.id})
 
-            res.status(201).json({ message: "Register account success" })
+            const returnObj={
+                status:201,
+                message:"Register account success"
+            }
+            res.status(201).json(returnObj)
         } catch (err) {
             next(err)
         }
@@ -63,8 +78,12 @@ class UserController{
     static async getAllItems(req,res,next){
         try {
             const allItems = await UserServices.getAllItemPaginated(req.query)
-
-            res.status(200).json(allItems)
+            const returnObj = {
+                status:200,
+                message:"Success",
+                data:allItems
+            }
+            res.status(200).json(returnObj)
         } catch (err) {
             next(err)
         }
@@ -75,7 +94,13 @@ class UserController{
             const getItem = await Item.findByPk(req.params.id)
 
             if (!getItem) throw{name:"NotFound"}
-            res.status(200).json(getItem)
+
+            const returnObj = {
+                status:200,
+                message:"Success",
+                data:getItem
+            }
+            res.status(200).json(returnObj)
         } catch (err) {
             next(err)
         }
@@ -85,7 +110,13 @@ class UserController{
         const {id} = req.body
         try {
             const getItemRent = await UserServices.getRentedItems(id)
-            res.status(200).json(getItemRent)
+            
+            const returnObj = {
+                status:200,
+                message:"Success",
+                data:getItemRent
+            }
+            res.status(200).json(returnObj)
         } catch (err) {
             next(err)
         }
@@ -93,19 +124,34 @@ class UserController{
 
     static async postItemRent(req,res,next){
         let {items} = req.body
+        const objItems = {}
         const ids = items.map(el=>{
             return el.itemId
         })
-        
+
+        items.forEach(el=>{
+            objItems[el.itemId] = el
+        })
+         
         try {
             const t = await sequelize.transaction()
             const getItemRent = await UserServices.getItemForRent(ids)
-            console.log(getItemRent)
+            
             if (!getItemRent || getItemRent.length == 0 || getItemRent.length != ids.length) throw{name:"NotFound"}
-
+            console.log(getItemRent)
+            for (let item of getItemRent){
+                if (objItems[item.id].jumlah > item.jumlah){
+                    throw{name:"NotEnough"}
+                }
+            }
             await UserServices.postItemRent(items,t)
 
-            res.status(201).json({message:"Rent process success"})
+            const returnObj = {
+                status:201,
+                message:"Rent process success"
+            }
+
+            res.status(201).json(returnObj)
         } catch (err) {
             next(err)
         }
@@ -123,8 +169,13 @@ class UserController{
             }
 
             await UserServices.patchRentReturn(req.params.id,t)
+            
+            const returnObj = {
+                status:200,
+                message:"Item has been returned"
+            }
 
-            res.status(200).json({message:"Item has been returned"})
+            res.status(200).json(returnObj)
         } catch (err) {
             next(err)
             

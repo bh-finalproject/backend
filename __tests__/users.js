@@ -219,7 +219,8 @@ describe('User route test',()=>{
             const response = await agent.get('/user/items?page[size]=5&page[number]=1')
             expect(response.status).toBe(200)
             expect(response.body).toBeInstanceOf(Object)
-            expect(response.body).toHaveLength(5)
+            expect(response.body).toHaveProperty('message','Success')
+            expect(response.body.data).toHaveLength(5)
         })
     })
 
@@ -227,7 +228,8 @@ describe('User route test',()=>{
         it('responds with 200 and get single item detail',async()=>{
             const response = await agent.get('/user/item/1')
             expect(response.status).toBe(200)
-            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body).toHaveProperty('message','Success')
+            expect(response.body.data).toBeInstanceOf(Object)
         })
 
         it('responds with 404 item not exist',async()=>{
@@ -245,13 +247,15 @@ describe('User route test',()=>{
                 {
                     "userId" : 3,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 3,
                     "itemId" : 2,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const response = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
@@ -267,13 +271,15 @@ describe('User route test',()=>{
                 {
                     "userId" : 3,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 3,
                     "itemId" : 2,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const response = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
@@ -286,15 +292,17 @@ describe('User route test',()=>{
             const cookies = cookienize(token)
             const body = {"items":[
                 {
-                    "userId" : 3,
-                    "itemId" : 9999,
+                    "userId" : 1,
+                    "itemId" : 100,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 3,
                     "itemId" : 2,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const response = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
@@ -302,6 +310,56 @@ describe('User route test',()=>{
             expect(response.body).toBeInstanceOf(Object)
            
         } )
+
+        it('responds with 400 post items for items count more than stocks', async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 3,
+                    "itemId" : 1,
+                    "jumlah":1000,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-09"
+                },{
+                    "userId" : 3,
+                    "itemId" : 2,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-10"
+                }
+            ]}
+            const response = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
+            expect(response.status).toBe(400)
+            expect(response.body).toBeInstanceOf(Object)
+           
+        } )
+
+        it('responds with 400 post items for rent return date <= current date', async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 3,
+                    "itemId" : 1,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2024-04-09"
+                },{
+                    "userId" : 3,
+                    "itemId" : 2,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2024-04-10"
+                }
+            ]}
+            const response = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
+            expect(response.status).toBe(400)
+            expect(response.body).toBeInstanceOf(Object)
+           
+        } )
+
+        
 
         
     })
