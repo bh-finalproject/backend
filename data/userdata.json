@@ -1,0 +1,29 @@
+[
+    {
+        "username":"hafiz123",
+        "email":"fadillahhafiz.fadillah@gmail.com",
+        "password":"hafiz123",
+        "phoneNumber":"081320064505"
+    },
+    {
+    
+        "username":"juan123",
+        "email":"juan@mail.com",
+        "password":"juan123",
+        "phoneNumber":"082246245458"
+    },
+    {
+    
+        "username":"jhon123",
+        "email":"jhon@mail.com",
+        "password":"jhon123",
+        "phoneNumber":"123123123123"
+    },
+    {
+    
+        "username":"derek123",
+        "email":"derek@mail.com",
+        "password":"derek123",
+        "phoneNumber":"123123123123"
+    }
+]

@@ -1,0 +1,42 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie": "^0.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.1",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13",
+    "pg": "^8.11.3",
+    "sequelize": "^6.37.1",
+    "sequelize-cli": "^6.6.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4"
+  },
+  "scripts": {
+    "test": "npx jest --forceExit --detectOpenHandles --runInBand",
+    "testCov": "npx jest --forceExit --detectOpenHandles --runInBand --coverage",
+    "start": "nodemon bin/www",
+    "refresh": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all && nodemon bin/www",
+    "refreshTest": "npx sequelize db:migrate:undo:all --env test && npx sequelize db:migrate --env test && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bh-finalproject/backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bh-finalproject/backend/issues"
+  },
+  "homepage": "https://github.com/bh-finalproject/backend#readme"
+}
