@@ -77,7 +77,13 @@ class AdminServices{
 
     static async getRentedItems(id){
         try {
-            const rentedItems = await Rent.findAll({where:{userId:id},
+            let params ={}
+            if (id){
+                params.where = {
+                    userId:id
+                }
+            }
+            const rentedItems = await Rent.findAll({params,
                 include:[{model:Item, attributes:['namaBarang','gambar']}]})
             // const rentedItems = await sequelize.query(`
             // SELECT 

@@ -109,6 +109,9 @@ class UserController{
     static async getItemRent(req,res,next){
         const {id} = req.body
         try {
+            if (id != req.user.id){
+                throw{name:"Forbidden"}
+            }
             const getItemRent = await UserServices.getRentedItems(id)
             
             const returnObj = {

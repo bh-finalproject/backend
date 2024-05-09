@@ -372,13 +372,15 @@ describe('User route test',()=>{
                 {
                     "userId" : 3,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 3,
                     "itemId" : 2,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const r1 = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
@@ -397,13 +399,15 @@ describe('User route test',()=>{
                 {
                     "userId" : 3,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 3,
                     "itemId" : 2,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const r1 = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
@@ -419,13 +423,15 @@ describe('User route test',()=>{
                 {
                     "userId" : 3,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 3,
                     "itemId" : 2,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const r1 = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
@@ -443,13 +449,15 @@ describe('User route test',()=>{
                 {
                     "userId" : 3,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 3,
                     "itemId" : 2,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const body2 = {
@@ -470,13 +478,15 @@ describe('User route test',()=>{
                 {
                     "userId" : 3,
                     "itemId" : 1,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-09"
+                    "tanggalKembali" : "2099-04-09"
                 },{
                     "userId" : 3,
                     "itemId" : 2,
+                    "jumlah":1,
                     "tanggalPinjam" : "2024-04-08",
-                    "tanggalKembali" : "2024-04-10"
+                    "tanggalKembali" : "2099-04-10"
                 }
             ]}
             const body2 = {
@@ -485,6 +495,33 @@ describe('User route test',()=>{
             const r1 = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
             const r2 = await agent.get('/user/rented-item').send(body2).set('Cookie',[wrongCookies])
             expect(r2.status).toBe(401)
+            expect(r2.body).toBeInstanceOf(Object)
+        })
+
+        it('response 403 access forbidden',async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 3,
+                    "itemId" : 1,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-09"
+                },{
+                    "userId" : 3,
+                    "itemId" : 2,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-10"
+                }
+            ]}
+            const body2 = {
+                "id":4
+            }
+            const r1 = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
+            const r2 = await agent.get('/user/rented-item').send(body2).set('Cookie',[cookies])
+            expect(r2.status).toBe(403)
             expect(r2.body).toBeInstanceOf(Object)
         })
 

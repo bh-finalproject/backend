@@ -147,8 +147,14 @@ class UserServices{
 
     static async getStillRent(){
         try{
-            console.log("MASUK SINI")
-            const getAllRentInRent = await Rent.findAll({where:{status:"Sedang Dipinjam"}})
+            const getAllRentInRent = await Rent.findAll({where:{status:"Sedang Dipinjam"},
+            include:[
+               { model:UserData},
+                {model:Item}
+            ],
+            order:["userId"]
+            },
+        )
             return getAllRentInRent
         }
         catch(err){

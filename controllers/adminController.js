@@ -113,7 +113,7 @@ class AdminController{
             const getItemRent = await AdminServices.getItemForRent(ids)
             
             if (!getItemRent || getItemRent.length == 0 || getItemRent.length != ids.length) throw{name:"NotFound"}
-            console.log(getItemRent)
+
             for (let item of getItemRent){
                 if (objItems[item.id].jumlah > item.jumlah){
                     throw{name:"NotEnough"}

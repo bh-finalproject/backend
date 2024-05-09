@@ -16,14 +16,14 @@ app.use(express.json())
 app.use('/static',express.static(path.join(__dirname,'public')))
 app.use(router)
 
-// testSend()
+
 
 // function testInterval(){
 //     console.log("jalan tiap 10 detik")
 // }
 
-
-// setInterval(testInterval,10000)
+// run email check for once a day
+setInterval(testSend,1000*60*60*24)
 
 module.exports = {app,baseDir}
 
