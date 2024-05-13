@@ -1,9 +1,10 @@
 const { comparePassword } = require('../helpers/bcrypt')
 const {cookienize} = require('../helpers/cookies')
 const { signToken } = require('../helpers/jwt')
-const {sequelize, UserData, Admin,Item} = require('../models')
+const {sequelize, UserData, Admin,Item, Rent} = require('../models')
 const AdminServices = require('../services/adminServices')
 const UserServices = require('../services/userServices')
+const { Op } = require("sequelize");
 
 
 
@@ -66,12 +67,70 @@ class AdminController{
     }
 
     static async getAllItems(req,res,next){
+        const { filter, sort, page,search } = req.query;
+        const paramQuerySQL = {};
+        let limit;
+        let offset;
+
+        // filtering by category
+        if (filter !== '' && typeof filter !== 'undefined') {
+            const query = filter.kategori.split(',').map((item) => ({
+            [Op.eq]: item,
+            }));
+
+            paramQuerySQL.where = {
+            kategori: { [Op.or]: query },
+            };
+        }
+
+        // sorting
+        if (sort !== '' && typeof sort !== 'undefined') {
+            let query;
+            if (sort.charAt(0) !== '-') {
+            query = [[sort, 'ASC']];
+            } else {
+            query = [[sort.replace('-', ''), 'DESC']];
+            }
+
+            paramQuerySQL.order = query;
+        } else{
+            paramQuerySQL.order = [['id','ASC']]
+        }
+
+        // pagination
+        if (page !== '' && typeof page !== 'undefined') {
+            if (page.size !== '' && typeof page.size !== 'undefined') {
+            limit = page.size;
+            paramQuerySQL.limit = limit;
+            }
+
+            if (page.number !== '' && typeof page.number !== 'undefined') {
+            offset = page.number * limit - limit;
+            paramQuerySQL.offset = offset;
+            }
+        } else {
+            limit = 5; // limit 5 item
+            offset = 0;
+            paramQuerySQL.limit = limit;
+            paramQuerySQL.offset = offset;
+        }
+        if (search !== '' && typeof search !== 'undefined'){
+            paramQuerySQL.where['namaBarang'] = {[Op.iLike]:`%${search}%`}
+        }
+       
+        paramQuerySQL.attributes = ['id','namaBarang','jumlah','kategori','gambar']
+
         try {
-            const allItems = await AdminServices.getAllItemPaginated(req.query)
+            const allItems = await Item.findAll(paramQuerySQL)
+
+            const allItemLength = await Item.findAll()
+
+            const itemLength = allItemLength.length
 
             const returnObj = {
                 status: 200,
                 message: "Success",
+                length:itemLength,
                 data:allItems
             }
 
@@ -84,7 +143,15 @@ class AdminController{
     static async getItemRent(req,res,next){
         const {id} = req.body
         try {
-            const getItemRent = await AdminServices.getRentedItems(id)
+            let params ={}
+            if (id){
+                params.where = {
+                    userId:id
+                }
+            }
+
+            const getItemRent = await Rent.findAll({params,
+                include:[{model:Item, attributes:['namaBarang','gambar']}]})
             
             const returnObj = {
                 status: 200,
@@ -107,10 +174,11 @@ class AdminController{
         items.forEach(el=>{
             objItems[el.itemId] = el
         })
-        
+
+        const t = await sequelize.transaction()
         try {
-            const t = await sequelize.transaction()
-            const getItemRent = await AdminServices.getItemForRent(ids)
+            
+            const getItemRent = await Item.findAll({where:{id:{[Op.in]:ids}}})
             
             if (!getItemRent || getItemRent.length == 0 || getItemRent.length != ids.length) throw{name:"NotFound"}
 
@@ -119,8 +187,22 @@ class AdminController{
                     throw{name:"NotEnough"}
                 }
             }
+
+
+            for (let item of items){
+                let getItem = await Item.findByPk(item.itemId)
+                if (getItem.jumlah < 1) throw{name:"ItemZero"}
+                let jumlah = item.jumlah
+                item.status = "Sedang Dipinjam"
+    
+                await Rent.create(item,{transaction:t} )
+                await getItem.decrement('jumlah',{by:jumlah},{transaction:t})
+            }
+            
+            
+            await t.commit()
            
-            await AdminServices.postItemRent(items,t)
+            // await AdminServices.postItemRent(items,t)
 
             const returnObj = {
                 status: 201,
@@ -129,6 +211,7 @@ class AdminController{
 
             res.status(201).json(returnObj)
         } catch (err) {
+            await t.rollback()
             next(err)
         }
     }
@@ -151,9 +234,10 @@ class AdminController{
     }
 
     static async patchRentReturn(req,res,next){
+        const t = await sequelize.transaction()
         try {
-            const t = await sequelize.transaction()
-            const getRentItem = await AdminServices.getRentItem(req.params.id)
+            
+            const getRentItem = await Rent.findByPk(req.params.id)
             
             if (!getRentItem) throw{name:"NotFound"}
             // console.log(getRentItem)
@@ -161,7 +245,13 @@ class AdminController{
                 throw{name:"AlreadyReturned"}
             }
 
-            await AdminServices.patchRentReturn(req.params.id,t)
+            
+            const getItem = await Item.findByPk(getRentItem.itemId)
+            await getItem.increment('jumlah',{by:getRentItem.jumlah},{transaction:t})
+
+            await t.commit()
+
+            // await AdminServices.patchRentReturn(req.params.id,t)
 
             const returnObj = {
                 status:200,
@@ -170,14 +260,15 @@ class AdminController{
 
             res.status(200).json(returnObj)
         } catch (err) {
+            await t.rollback()
             next(err)
             
         }
         
     }
     static async postAddItem(req,res,next){
+        const t = await sequelize.transaction()
         try {
-            const t = await sequelize.transaction()
             const{namaBarang, jumlah, kategori, lokasi, deskripsi} = req.body
             const gambar = 'items/'+req.file.filename
 
@@ -185,7 +276,11 @@ class AdminController{
                 throw{name:"cannotEmpty"}
             }
 
-            const data = await AdminServices.postAddItem(req.body, gambar,t)
+            const data = await Item.create({namaBarang,jumlah,kategori,lokasi,deskripsi, gambar},{transaction:t})
+
+            await t.commit()
+
+            // const data = await AdminServices.postAddItem(req.body, gambar,t)
 
             const returnObj = {
                 status:201,
@@ -197,13 +292,14 @@ class AdminController{
 
 
         } catch (err) {
+            await t.rollback()
             next(err)
         }
     }
 
     static async postEditItem(req,res,next){
+        const t = await sequelize.transaction()
         try {
-            const t = await sequelize.transaction()
             const {id} = req.params
             const getItem = await Item.findByPk(id)
             if (!getItem){
@@ -222,27 +318,34 @@ class AdminController{
                 throw{name:"cannotEmpty"}
             }
 
-            const data = await AdminServices.postEditItem(req.body, gambar,id,t)
+            const result = await Item.update({namaBarang,jumlah,kategori,lokasi,deskripsi,gambar},{where:{id}},{transaction:t})
+            await t.commit()
+            const data = await Item.findByPk(id)
+
+            // const data = await AdminServices.postEditItem(req.body, gambar,id,t)
             const returnObj = {
                 status:200,
                 message:"Success",
                 data
             }
+
             res.status(200).json(returnObj)
 
         } catch (err) {
+            await t.rollback()
             next(err)
         }
     }
 
     static async deleteItem(req,res,next){
+        const t = await sequelize.transaction()
         try {
-            const t = await sequelize.transaction()
             const {id} = req.params
             const getItem = await Item.findByPk(id)
             if (!getItem) throw{name:"NotFound"}
 
-            const data = await AdminServices.deleteItem(id, t)
+            const data = await Item.destroy({where:{id:id}},{transaction:t})
+            await t.commit()
 
             const returnObj = {
                 status:200,
@@ -251,7 +354,25 @@ class AdminController{
             res.status(200).json(returnObj)
 
         } catch (err) {
+            await t.rollback()
             next(err)
+        }
+    }
+
+    static async getAllUser(req,res,next){
+        try {
+            const getUsers = await UserData.findAll({
+                attributes:['id','username']
+            })
+
+            const returnObj = {
+                status:200,
+                message:"Success",
+                data:getUsers
+            }
+            res.status(200).json(returnObj)
+        } catch (error) {
+            next(error)
         }
     }
 
