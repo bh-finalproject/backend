@@ -15,7 +15,6 @@ async function authentication(req, res, next) {
         if(!access_token) throw({name:"AuthenticationError"})
         // console.log(access_token)
         const verified = verifyToken(access_token)
-        if (!verified) throw ({ name: "AuthenticationError" })
         
         const user = await UserData.findOne({where:{email:verified.email}})
         // console.log('user>>',user)

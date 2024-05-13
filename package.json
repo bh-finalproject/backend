@@ -23,7 +23,7 @@
   },
   "scripts": {
     "test": "npx jest --forceExit --detectOpenHandles --runInBand",
-    "testCov": "npx jest --forceExit --detectOpenHandles --runInBand --coverage",
+    "testCov": "npx sequelize db:migrate:undo:all --env test && npx sequelize db:migrate --env test && npx jest --forceExit --detectOpenHandles --runInBand --coverage",
     "start": "nodemon bin/www",
     "refresh": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all && nodemon bin/www",
     "refreshTest": "npx sequelize db:migrate:undo:all --env test && npx sequelize db:migrate --env test && npm run test"

@@ -29,6 +29,7 @@ beforeAll(async()=>{
     let users = require('../data/user.json')
     let userData = require('../data/userdata.json')
     let items = require('../data/items.json')
+    let rents = require('../data/rent.json')
 
     users.forEach(el=>{
         el.createdAt = new Date()
@@ -45,12 +46,24 @@ beforeAll(async()=>{
         el.createdAt = new Date()
         el.updatedAt = new Date()
     })
+
+    rents.forEach(el=>{
+        el.createdAt = new Date()
+        el.updatedAt = new Date()
+    })
     await sequelize.queryInterface.bulkInsert('UserData',userData)
     await sequelize.queryInterface.bulkInsert('Users',users)
     await sequelize.queryInterface.bulkInsert('Items',items)
+    await sequelize.queryInterface.bulkInsert('Rents',rents)
 })
 
 afterAll(async()=>{
+    await sequelize.queryInterface.bulkDelete('Rents',null,{
+        truncate:true,
+        cascade:true,
+        restartIdentity:true
+    })
+
     await sequelize.queryInterface.bulkDelete('Items',null,{
         truncate:true,
         cascade:true,
@@ -222,6 +235,29 @@ describe('User route test',()=>{
             expect(response.body).toHaveProperty('message','Success')
             expect(response.body.data).toHaveLength(5)
         })
+
+        it('responds with 200 and get all items with registered user no params',async()=>{
+            const response = await agent.get('/user/items')
+            expect(response.status).toBe(200)
+            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body).toHaveProperty('message','Success')
+            expect(response.body.data).toHaveLength(5)
+        })
+
+        it('responds with 200 and get all items with sort and filter',async()=>{
+            const response = await agent.get('/user/items?filter[kategori]=Medis&sort=id')
+            expect(response.status).toBe(200)
+            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body).toHaveProperty('message','Success')
+            expect(response.body.data).toHaveLength(5)
+        })
+        it('responds with 200 and get all items with sort empty',async()=>{
+            const response = await agent.get('/user/items?filter[kategori]=Medis&sort=-id')
+            expect(response.status).toBe(200)
+            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body).toHaveProperty('message','Success')
+            expect(response.body.data).toHaveLength(5)
+        })
     })
 
     describe('GET /user/item/<id> - get single item detail',()=>{
@@ -264,8 +300,82 @@ describe('User route test',()=>{
             expect(response.body).toHaveProperty('message','Rent process success')
         } )
 
+        it('responds with 401 unauthorized access not sending token', async()=>{
+            const token = 'wleowleo'
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 3,
+                    "itemId" : 1,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-09"
+                },{
+                    "userId" : 3,
+                    "itemId" : 2,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-10"
+                }
+            ]}
+            const response = await agent.post('/user/item-for-rent').send(body)
+            expect(response.status).toBe(401)
+            expect(response.body).toBeInstanceOf(Object)
+        } )
+
+        it('responds with 401 unauthorized access wrong cookies', async()=>{
+            const token = ''
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 3,
+                    "itemId" : 1,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-09"
+                },{
+                    "userId" : 3,
+                    "itemId" : 2,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-10"
+                }
+            ]}
+            const response = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
+            expect(response.status).toBe(401)
+            expect(response.body).toBeInstanceOf(Object)
+        } )
+
+
         it('responds with 401 unauthorized access with random token', async()=>{
             const token = 'wleowleo'
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 3,
+                    "itemId" : 1,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-09"
+                },{
+                    "userId" : 3,
+                    "itemId" : 2,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-10"
+                }
+            ]}
+            const response = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
+            expect(response.status).toBe(401)
+            expect(response.body).toBeInstanceOf(Object)
+        } )
+
+        it('responds with 401 unauthorized access with fake user', async()=>{
+            const fakeUser = {
+                email:'getty@mail.com'
+            }
+            
+            const token = signToken(fakeUser)
             const cookies = cookienize(token)
             const body = {"items":[
                 {
@@ -359,6 +469,54 @@ describe('User route test',()=>{
            
         } )
 
+        it('responds with 400 stock not enough', async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 3,
+                    "itemId" : 9,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-09"
+                },{
+                    "userId" : 3,
+                    "itemId" : 2,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-10"
+                }
+            ]}
+            const response = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
+            expect(response.status).toBe(400)
+            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body).toHaveProperty('message','Stock not enough')
+        } )
+
+        it('responds with 400 item zero', async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 3,
+                    "itemId" : 9,
+                    "jumlah":0,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-09"
+                },{
+                    "userId" : 3,
+                    "itemId" : 2,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-10"
+                }
+            ]}
+            const response = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
+            expect(response.status).toBe(400)
+            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body).toHaveProperty('message','Item not available')
+        } )
+
         
 
         
@@ -438,6 +596,31 @@ describe('User route test',()=>{
             const r2 = await agent.patch('/user/return-item/9999').set('Cookie',[cookies])
             expect(r2.status).toBe(404)
             expect(r2.body).toBeInstanceOf(Object)
+        })
+
+        it('response 400 item has been returned',async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 3,
+                    "itemId" : 1,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-09"
+                },{
+                    "userId" : 3,
+                    "itemId" : 2,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-10"
+                }
+            ]}
+            const r1 = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
+            const r2 = await agent.patch('/user/return-item/5').set('Cookie',[cookies])
+            expect(r2.status).toBe(400)
+            expect(r2.body).toBeInstanceOf(Object)
+            expect(r2.body).toHaveProperty('message','You already returned this item')
         })
     })
 
