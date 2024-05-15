@@ -1,0 +1,34 @@
+[
+    {
+        "itemId":1,
+        "userId":1,
+        "jumlah":1,
+        "status":"Sedang Dipinjam",
+        "tanggalPinjam":"2024-04-05",
+        "tanggalKembali":"2024-06-11"
+    },
+    {
+        "itemId":2,
+        "userId":3,
+        "jumlah":1,
+        "status":"Sedang Dipinjam",
+        "tanggalPinjam":"2024-04-05",
+        "tanggalKembali":"2024-06-11"
+    },
+    {
+        "itemId":4,
+        "userId":1,
+        "jumlah":1,
+        "status":"Sedang Dipinjam",
+        "tanggalPinjam":"2024-04-05",
+        "tanggalKembali":"2024-06-08"
+    },
+    {
+        "itemId":7,
+        "userId":3,
+        "jumlah":1,
+        "status":"Sedang Dipinjam",
+        "tanggalPinjam":"2024-04-05",
+        "tanggalKembali":"2024-06-10"
+    }
+]
