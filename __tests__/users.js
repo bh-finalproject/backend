@@ -29,7 +29,7 @@ beforeAll(async()=>{
     let users = require('../data/user.json')
     let userData = require('../data/userdata.json')
     let items = require('../data/items.json')
-    let rents = require('../data/rent.json')
+    let rents = require('../data/rentTest.json')
 
     users.forEach(el=>{
         el.createdAt = new Date()
@@ -257,6 +257,13 @@ describe('User route test',()=>{
             expect(response.body).toBeInstanceOf(Object)
             expect(response.body).toHaveProperty('message','Success')
             expect(response.body.data).toHaveLength(5)
+        })
+        it('responds with 200 and get all items with search',async()=>{
+            const response = await agent.get('/user/items?search=endoskopi')
+            expect(response.status).toBe(200)
+            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body).toHaveProperty('message','Success')
+            expect(response.body.data).toHaveLength(1)
         })
     })
 

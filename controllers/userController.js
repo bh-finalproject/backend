@@ -127,6 +127,7 @@ class UserController{
 
         //search
         if (search !== '' && typeof search !== 'undefined'){
+            paramQuerySQL.where = {'namaBarang':{}}
             paramQuerySQL.where['namaBarang'] = {[Op.iLike]:`%${search}%`}
         }
 

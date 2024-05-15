@@ -33,6 +33,7 @@ beforeAll(async()=>{
     let admins = require('../data/admin.json')
     let userData = require('../data/userdata.json')
     let items = require('../data/items.json')
+    let rents = require('../data/rentTest.json')
 
     admins.forEach(el=>{
         el.createdAt = new Date()
@@ -49,12 +50,23 @@ beforeAll(async()=>{
         el.createdAt = new Date()
         el.updatedAt = new Date()
     })
+    rents.forEach(el=>{
+        el.createdAt = new Date()
+        el.updatedAt = new Date()
+    })
     await sequelize.queryInterface.bulkInsert('UserData',userData)
     await sequelize.queryInterface.bulkInsert('Admins',admins)
     await sequelize.queryInterface.bulkInsert('Items',items)
+    await sequelize.queryInterface.bulkInsert('Rents',rents)
 })
 
 afterAll(async()=>{
+
+    await sequelize.queryInterface.bulkDelete('Rents',null,{
+        truncate:true,
+        cascade:true,
+        restartIdentity:true
+    })
     
     await sequelize.queryInterface.bulkDelete('Items',null,{
         truncate:true,
@@ -247,6 +259,14 @@ describe('Admin route test',()=>{
             expect(response.body).toBeInstanceOf(Object)
             expect(response.body).toHaveProperty('message','Success')
             expect(response.body.data).toHaveLength(5)
+        })
+
+        it('responds with 200 and get all items with search',async()=>{
+            const response = await agent.get('/admin/items?search=endoskopi')
+            expect(response.status).toBe(200)
+            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body).toHaveProperty('message','Success')
+            expect(response.body.data).toHaveLength(1)
         })
     })
 
@@ -608,6 +628,31 @@ describe('Admin route test',()=>{
             expect(r2.status).toBe(404)
             expect(r2.body).toBeInstanceOf(Object)
         })
+
+        it('response 400 item has been returned',async()=>{
+            const token = signToken(userDataSingle)
+            const cookies = cookienize(token)
+            const body = {"items":[
+                {
+                    "userId" : 3,
+                    "itemId" : 1,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-09"
+                },{
+                    "userId" : 3,
+                    "itemId" : 2,
+                    "jumlah":1,
+                    "tanggalPinjam" : "2024-04-08",
+                    "tanggalKembali" : "2099-04-10"
+                }
+            ]}
+            const r1 = await agent.post('/admin/item-for-rent').send(body).set('Cookie',[cookies])
+            const r2 = await agent.patch('/admin/return-item/6').set('Cookie',[cookies])
+            expect(r2.status).toBe(400)
+            expect(r2.body).toBeInstanceOf(Object)
+            expect(r2.body).toHaveProperty('message','You already returned this item')
+        })
     })
 
     describe('GET admin/rented-item - get all rented item from admin',()=>{
@@ -742,6 +787,7 @@ describe('Admin route test',()=>{
             .field('kategori','Medis')
             .field('lokasi','RS LALALALA')
             .field('deskripsi','ini Stetoskop')
+            .attach('gambar',path.resolve(baseDir,'./public/items/itemImg-1.jpg'))
             .set('Cookie',[cookies]) 
             expect(r1.status).toBe(200)
             expect(r1.body).toBeInstanceOf(Object)
