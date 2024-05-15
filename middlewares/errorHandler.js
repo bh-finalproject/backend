@@ -26,10 +26,6 @@ function errorHandler(err,req,res,next){
             status = 400
             message = err.errors[0].message
             break;
-        case "SequelizeForeignKeyConstraintError":
-            status = 400,
-            message = "Something went wrong, please use the valid format"
-            break;
         case "SequelizeUniqueConstraintError":
             status = 400
             message = err.errors[0].message

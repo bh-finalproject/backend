@@ -28,7 +28,7 @@ class AdminController{
             const cookieString = cookienize(access_token)
             res.cookie(cookieString);
             
-            getAdmin = JSON.parse(JSON.stringify(getAdmin))
+            getAdmin = JSON.parse(JSON.stringify(getUserData))
 
             delete getAdmin["password"]
             delete getAdmin["createdAt"]
@@ -114,9 +114,12 @@ class AdminController{
             paramQuerySQL.limit = limit;
             paramQuerySQL.offset = offset;
         }
+
+    
         if (search !== '' && typeof search !== 'undefined'){
+            paramQuerySQL.where = {'namaBarang':{}}
             paramQuerySQL.where['namaBarang'] = {[Op.iLike]:`%${search}%`}
-        }
+        } 
        
         paramQuerySQL.attributes = ['id','namaBarang','jumlah','kategori','gambar']
 
