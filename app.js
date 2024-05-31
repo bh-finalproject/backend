@@ -10,7 +10,7 @@ const router = require('./routers/router')
 const testSend = require('./helpers/nodeMailer')
 const baseDir = __dirname
 
-app.use(cors())
+app.use(cors({credentials:true, origin:true}))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 app.use('/static',express.static(path.join(__dirname,'public')))
