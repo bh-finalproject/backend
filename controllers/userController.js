@@ -36,7 +36,7 @@ class UserController{
 
             const access_token = signToken({email:getUserData.email})
             const cookieString = cookienize(access_token)
-            res.cookie(cookieString);
+            res.setHeader('Set-Cookie',cookieString);
 
             getUserData = JSON.parse(JSON.stringify(getUserData))
             delete getUserData["password"]

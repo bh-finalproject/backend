@@ -26,7 +26,7 @@ class AdminController{
             let access_token = signToken({email:getUserData.email})
             
             const cookieString = cookienize(access_token)
-            res.cookie(cookieString);
+            res.setHeader('Set-Cookie',cookieString);
             
             getAdmin = JSON.parse(JSON.stringify(getUserData))
 
