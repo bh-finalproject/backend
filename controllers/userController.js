@@ -107,6 +107,15 @@ class UserController{
             paramQuerySQL.order = [['id','ASC']]
         }
 
+        
+        //search
+        if (search !== '' && typeof search !== 'undefined'){
+            paramQuerySQL.where = {'namaBarang':{}}
+            paramQuerySQL.where['namaBarang'] = {[Op.iLike]:`%${search}%`}
+        }
+
+        const lengthQuery = {...paramQuerySQL}
+
         // pagination
         if (page !== '' && typeof page !== 'undefined') {
             if (page.size !== '' && typeof page.size !== 'undefined') {
@@ -125,17 +134,13 @@ class UserController{
             paramQuerySQL.offset = offset;
         }
 
-        //search
-        if (search !== '' && typeof search !== 'undefined'){
-            paramQuerySQL.where = {'namaBarang':{}}
-            paramQuerySQL.where['namaBarang'] = {[Op.iLike]:`%${search}%`}
-        }
+        
 
         paramQuerySQL.attributes = ['id','namaBarang','jumlah','kategori','gambar']
         try {
             const allItems = await Item.findAll(paramQuerySQL)
 
-            const allItemLength = await Item.findAll()
+            const allItemLength = await Item.findAll(lengthQuery)
 
             const itemLength = allItemLength.length
 
