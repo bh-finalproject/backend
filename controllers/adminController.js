@@ -26,7 +26,7 @@ class AdminController{
             let access_token = signToken({email:getUserData.email})
             
             const cookieString = cookienize(access_token)
-            res.cookie(cookieString);
+            res.setHeader('Set-Cookie',cookieString);
             
             getAdmin = JSON.parse(JSON.stringify(getUserData))
 
@@ -97,6 +97,13 @@ class AdminController{
             paramQuerySQL.order = [['id','ASC']]
         }
 
+        if (search !== '' && typeof search !== 'undefined'){
+            paramQuerySQL.where = {'namaBarang':{}}
+            paramQuerySQL.where['namaBarang'] = {[Op.iLike]:`%${search}%`}
+        }
+
+        const lengthQuery = {...paramQuerySQL}
+
         // pagination
         if (page !== '' && typeof page !== 'undefined') {
             if (page.size !== '' && typeof page.size !== 'undefined') {
@@ -115,18 +122,13 @@ class AdminController{
             paramQuerySQL.offset = offset;
         }
 
-    
-        if (search !== '' && typeof search !== 'undefined'){
-            paramQuerySQL.where = {'namaBarang':{}}
-            paramQuerySQL.where['namaBarang'] = {[Op.iLike]:`%${search}%`}
-        } 
        
         paramQuerySQL.attributes = ['id','namaBarang','jumlah','kategori','gambar']
 
         try {
             const allItems = await Item.findAll(paramQuerySQL)
 
-            const allItemLength = await Item.findAll()
+            const allItemLength = await Item.findAll(lengthQuery)
 
             const itemLength = allItemLength.length
 
