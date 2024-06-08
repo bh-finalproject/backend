@@ -6,6 +6,7 @@ function cookienize(token){
     const cookieOptions = {
       secure: secureCookie,
       httpOnly: httpOnlyCookie,
+      sameSite:'none'
     };
   
     const cookieString = cookie.serialize('access_token', 'Bearer '+ token, cookieOptions);

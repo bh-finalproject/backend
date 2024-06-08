@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 
 function signToken(data) {
-    return jwt.sign(data, PRIVATE_KEY,{expiresIn:'15m'})
+    return jwt.sign(data, PRIVATE_KEY,{expiresIn:'24h'})
 }
 
 function verifyToken(token) {
