@@ -1,4 +1,5 @@
-const { comparePassword } = require('../helpers/bcrypt')
+const { comparePassword } = require('../helpers/bcrypt');
+const { cookienize } = require('../helpers/cookies');
 const { signToken } = require('../helpers/jwt')
 const {sequelize, UserData, User,Item,Rent} = require('../models')
 const UserServices = require('../services/userServices')
@@ -6,18 +7,7 @@ const cookie = require('cookie');
 const { Op } = require("sequelize");
 
 
-function cookienize(token){
-    const secureCookie = true;
-    const httpOnlyCookie = true;
-    const cookieOptions = {
-      secure: secureCookie,
-      httpOnly: httpOnlyCookie,
-    };
-  
-    const cookieString = cookie.serialize('access_token', 'Bearer '+ token, cookieOptions);
-
-    return cookieString
-}
+cookienize
 
 class UserController{
     static async userLogin(req,res,next){
