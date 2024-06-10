@@ -83,12 +83,19 @@ class UserController{
 
         // filtering by category
         if (filter !== '' && typeof filter !== 'undefined') {
-            const query = filter.kategori.split(',').map((item) => ({
-            [Op.eq]: item,
-            }));
-
+            let query
+            if (filter.jumlah[0] == '>'){
+                query =  filter.jumlah[1].split(',').map((item) => ({
+                    [Op.gt]: Number(item)
+                }))
+            } else{
+                query =  filter.jumlah.split(',').map((item) => ({
+                    [Op.eq]: Number(item)
+                }))
+            }
+    
             paramQuerySQL.where = {
-            kategori: { [Op.or]: query },
+            jumlah: { [Op.or]: query },
             };
         }
 
@@ -175,6 +182,7 @@ class UserController{
 
     static async getItemRent(req,res,next){
         const {id} = req.body
+        
         try {
             if (id != req.user.id){
                 throw{name:"Forbidden"}

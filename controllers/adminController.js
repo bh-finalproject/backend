@@ -74,12 +74,19 @@ class AdminController{
 
         // filtering by category
         if (filter !== '' && typeof filter !== 'undefined') {
-            const query = filter.kategori.split(',').map((item) => ({
-            [Op.eq]: item,
-            }));
-
+            let query
+            if (filter.jumlah[0] == '>'){
+                query =  filter.jumlah[1].split(',').map((item) => ({
+                    [Op.gt]: Number(item)
+                }))
+            } else{
+                query =  filter.jumlah.split(',').map((item) => ({
+                    [Op.eq]: Number(item)
+                }))
+            }
+    
             paramQuerySQL.where = {
-            kategori: { [Op.or]: query },
+            jumlah: { [Op.or]: query },
             };
         }
 
@@ -148,15 +155,16 @@ class AdminController{
     static async getItemRent(req,res,next){
         const {id} = req.body
         try {
-            let params ={}
-            if (id){
-                params.where = {
-                    userId:id
-                }
+            
+            let getItemRent
+            
+            if(id){
+                getItemRent = await Rent.findAll({where:{userId:id},
+                    include:[{model:Item, attributes:['namaBarang','gambar']}]})
+            } else{
+                getItemRent = await Rent.findAll({
+                    include:[{model:Item, attributes:['namaBarang','gambar']}]})
             }
-
-            const getItemRent = await Rent.findAll({params,
-                include:[{model:Item, attributes:['namaBarang','gambar']}]})
             
             const returnObj = {
                 status: 200,
@@ -250,9 +258,10 @@ class AdminController{
                 throw{name:"AlreadyReturned"}
             }
 
-            
+            await Rent.update({status:'Sudah Dikembalikan'},{where:{id:req.params.id}},{transaction:t})
             const getItem = await Item.findByPk(getRentItem.itemId)
             await getItem.increment('jumlah',{by:getRentItem.jumlah},{transaction:t})
+            
 
             await t.commit()
 
