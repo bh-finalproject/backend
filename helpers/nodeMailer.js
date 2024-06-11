@@ -2,7 +2,7 @@ const nodemailer  = require('nodemailer');
 
 const moment = require('moment');
 const errorHandler = require('../middlewares/errorHandler');
-const {Rent} = require('../models')
+const {Rent, UserData,Item} = require('../models')
 
 //setup transporter
 const transporter = nodemailer.createTransport({
