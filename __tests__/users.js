@@ -245,14 +245,21 @@ describe('User route test',()=>{
         })
 
         it('responds with 200 and get all items with sort and filter',async()=>{
-            const response = await agent.get('/user/items?filter[kategori]=Medis&sort=id')
+            const response = await agent.get('/user/items?filter[jumlah]=>3&sort=id')
             expect(response.status).toBe(200)
             expect(response.body).toBeInstanceOf(Object)
             expect(response.body).toHaveProperty('message','Success')
             expect(response.body.data).toHaveLength(5)
         })
+        it('responds with 200 and get all items with sort and filter = 3',async()=>{
+            const response = await agent.get('/user/items?filter[jumlah]=3&sort=id')
+            expect(response.status).toBe(200)
+            expect(response.body).toBeInstanceOf(Object)
+            expect(response.body).toHaveProperty('message','Success')
+            
+        })
         it('responds with 200 and get all items with sort empty',async()=>{
-            const response = await agent.get('/user/items?filter[kategori]=Medis&sort=-id')
+            const response = await agent.get('/user/items?filter[jumlah]=>3&sort=-id')
             expect(response.status).toBe(200)
             expect(response.body).toBeInstanceOf(Object)
             expect(response.body).toHaveProperty('message','Success')
@@ -631,7 +638,7 @@ describe('User route test',()=>{
         })
     })
 
-    describe('GET user/rented-item - get all rented item from user',()=>{
+    describe('POST user/rented-item - get all rented item from user',()=>{
         it('response 200 get rented item from single user',async()=>{
             const token = signToken(userDataSingle)
             const cookies = cookienize(token)
@@ -654,7 +661,7 @@ describe('User route test',()=>{
                 "id":3
             }
             const r1 = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
-            const r2 = await agent.get('/user/rented-item').send(body2).set('Cookie',[cookies])
+            const r2 = await agent.post('/user/rented-item').send(body2).set('Cookie',[cookies])
             expect(r2.status).toBe(200)
             expect(r2.body).toBeInstanceOf(Object)
         })
@@ -683,7 +690,7 @@ describe('User route test',()=>{
                 "id":3
             }
             const r1 = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
-            const r2 = await agent.get('/user/rented-item').send(body2).set('Cookie',[wrongCookies])
+            const r2 = await agent.post('/user/rented-item').send(body2).set('Cookie',[wrongCookies])
             expect(r2.status).toBe(401)
             expect(r2.body).toBeInstanceOf(Object)
         })
@@ -710,7 +717,7 @@ describe('User route test',()=>{
                 "id":4
             }
             const r1 = await agent.post('/user/item-for-rent').send(body).set('Cookie',[cookies])
-            const r2 = await agent.get('/user/rented-item').send(body2).set('Cookie',[cookies])
+            const r2 = await agent.post('/user/rented-item').send(body2).set('Cookie',[cookies])
             expect(r2.status).toBe(403)
             expect(r2.body).toBeInstanceOf(Object)
         })
