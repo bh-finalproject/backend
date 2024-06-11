@@ -23,7 +23,8 @@ app.use(router)
 // }
 
 // run email check for once a day
-setInterval(testSend,1000*60*60*24)
+// setInterval(testSend,1000*60*60*24)
+setInterval(testSend,1000*15)
 
 module.exports = {app,baseDir}
 
