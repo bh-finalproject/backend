@@ -7,10 +7,15 @@ const {Rent, UserData,Item} = require('../models')
 //setup transporter
 const transporter = nodemailer.createTransport({
     service: 'hotmail',
+    port: 456,
+    secure : true,
     auth: {
       user: 'mediinventory_bithealth@outlook.com',
       pass: process.env.NODEMAILER_PASS
-    }
+    },
+    tls: {
+      ciphers:'SSLv3'
+  }
   });
 
 
